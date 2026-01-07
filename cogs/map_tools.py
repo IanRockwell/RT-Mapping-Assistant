@@ -16,14 +16,13 @@ class MapTools(commands.Cog):
         if message.author == self.bot.user:
             return
 
-        beatmap_match = re.search(r'https://rhythmtyper\.net/beatmap/([a-zA-Z0-9]+)', message.content)
+        beatmap_match = re.search(r'rhythmtyper\.net/beatmap/([a-zA-Z0-9]+)', message.content)
         if not beatmap_match:
             return
 
         map_id = beatmap_match.group(1)
         
         metadata = await fetch_online_beatmap_metadata(map_id)
-        map_data = await fetch_and_analyze_beatmap(map_id)
         
         beatmap = metadata["beatmaps"][0]
         title = beatmap["songName"]
@@ -48,13 +47,26 @@ class MapTools(commands.Cog):
         
         embed = discord.Embed(
             title=f"{artist} - {title} by {mapper}",
+            description=f"Length: {format_length(length)} | BPM: {bpm}",
             color=discord.Color.blurple()
         )
-        embed.add_field(name="Stats", value=f"Length: {format_length(length)} | BPM: {bpm}", inline=True)
         embed.set_thumbnail(url=background_url)
         embed.set_footer(text=f"{status.capitalize()} | {plays} plays | {date_text}")
         
-        await message.channel.send(embed=embed)
+        difficulties = beatmap["difficulties"]
+        sorted_diffs = sorted(difficulties, key=lambda d: d.get("starRating", 0), reverse=True)
+        for diff in sorted_diffs:
+            sr = diff.get("starRating", 0)
+            od = diff.get("overallDifficulty", 0)
+            diff_length = diff.get("length", 0)
+            objects = diff.get("noteCount", 0) + diff.get("holdCount", 0)
+            
+            stats = (
+                f"- OD: {od:.2f}\n- Length: {format_length(diff_length)}\n- Objects: {objects}"
+            )
+            embed.add_field(name=f"{diff["name"]} | {sr:.2f} ★", value=stats, inline=True)
+        
+        await message.channel.send(embed=embed) 
         
 
 async def setup(bot: commands.Bot):
