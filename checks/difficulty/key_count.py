@@ -1,4 +1,5 @@
 from checks.base import CheckResult, CheckStatus
+from apis.rhythmtyper import format_timestamp
 
 def check_key_count(difficulty):
     notes = difficulty.get("data", {}).get("notes", [])
@@ -25,7 +26,7 @@ def check_key_count(difficulty):
             return CheckResult(
                 CheckStatus.FAIL,
                 "Key Count",
-                f"More than 10 keys pressed at {t}ms ({count} keys)."
+                f"More than 10 keys pressed at {format_timestamp(t)} ({count} keys)."
             )
     
     return CheckResult(CheckStatus.PASS, "Key Count")

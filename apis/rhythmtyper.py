@@ -9,6 +9,13 @@ def format_length(seconds):
     secs = int(seconds % 60)
     return f"{minutes}:{secs:02d}"
 
+def format_timestamp(ms):
+    total_seconds = ms / 1000
+    minutes = int(total_seconds // 60)
+    seconds = int(total_seconds % 60)
+    centiseconds = int((ms % 1000) / 10)
+    return f"{minutes}:{seconds:02d}:{centiseconds:02d}"
+
 async def fetch_online_beatmap_metadata(map_id):
 
     url = f"https://us-central1-rhythm-typer.cloudfunctions.net/api/getBeatmaps?limit=1&mapsetId={map_id}"
@@ -91,6 +98,7 @@ def calculate_drain_time(difficulty):
     for note in notes:
         if note.get("type") == "hold":
             note_times.append(note.get("startTime", 0))
+            note_times.append(note.get("endTime", 0))
         else:
             note_times.append(note.get("time", 0))
 
