@@ -1,14 +1,61 @@
+import re
+from datetime import datetime
 import discord
 from discord import app_commands
 from discord.ext import commands
+from apis.rhythmtyper import *
 
 
 class MapTools(commands.Cog):
-    """Map tools commands."""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.Cog.listener()
+    async def on_message(self, message: discord.Message):
+        if message.author == self.bot.user:
+            return
+
+        beatmap_match = re.search(r'https://rhythmtyper\.net/beatmap/([a-zA-Z0-9]+)', message.content)
+        if not beatmap_match:
+            return
+
+        map_id = beatmap_match.group(1)
+        
+        metadata = await fetch_online_beatmap_metadata(map_id)
+        map_data = await fetch_and_analyze_beatmap(map_id)
+        
+        beatmap = metadata["beatmaps"][0]
+        title = beatmap["songName"]
+        artist = beatmap["artistName"]
+        mapper = beatmap["mapper"]
+        length = beatmap["difficulties"][0]["length"]
+        bpm = beatmap["bpm"]
+        status = beatmap["status"]
+        background_url = beatmap["backgroundImageUrl"]
+        language = beatmap["language"]
+        
+        plays = beatmap["playCount"]
+        
+        if status == "ranked":
+            date_str = beatmap["rankedDate"]
+            date = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+            date_text = f"Ranked {date.strftime('%b %d, %Y')}"
+        else:
+            last_updated = beatmap["lastUpdatedAt"]
+            date = datetime.fromtimestamp(last_updated["_seconds"])
+            date_text = f"Updated {date.strftime('%b %d, %Y')}"
+        
+        embed = discord.Embed(
+            title=f"{artist} - {title} by {mapper}",
+            color=discord.Color.blurple()
+        )
+        embed.add_field(name="Stats", value=f"Length: {format_length(length)} | BPM: {bpm}", inline=True)
+        embed.set_thumbnail(url=background_url)
+        embed.set_footer(text=f"{status.capitalize()} | {plays} plays | {date_text}")
+        
+        await message.channel.send(embed=embed)
+        
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(MapTools(bot))

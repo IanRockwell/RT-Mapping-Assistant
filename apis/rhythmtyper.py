@@ -4,8 +4,13 @@ import json
 from io import BytesIO
 from PIL import Image
 
+def format_length(seconds: float) -> str:
+    minutes = int(seconds // 60)
+    secs = int(seconds % 60)
+    return f"{minutes}:{secs:02d}"
+
 async def fetch_online_beatmap_metadata(map_id: str):
-    
+
     url = f"https://us-central1-rhythm-typer.cloudfunctions.net/api/getBeatmaps?limit=1&mapsetId={map_id}"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
@@ -73,3 +78,4 @@ async def fetch_and_analyze_beatmap(map_id: str):
                 })
     
     return result
+
