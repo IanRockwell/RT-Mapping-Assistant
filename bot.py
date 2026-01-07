@@ -25,7 +25,6 @@ bot = commands.Bot(
 
 @bot.event
 async def on_ready():
-    """Called when the bot is ready and connected."""
     logger.info(f"Logged in as {bot.user} (ID: {bot.user.id})")
     logger.info(f"Connected to {len(bot.guilds)} guild(s)")
     
@@ -36,7 +35,6 @@ async def on_ready():
 
 
 async def load_cogs():
-    """Load all cogs from the cogs folder."""
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py") and not filename.startswith("_"):
             cog_name = f"cogs.{filename[:-3]}"
@@ -45,7 +43,6 @@ async def load_cogs():
 
 
 async def main():
-    """Main entry point for the bot."""
     async with bot:
         await load_cogs()
         token = os.getenv("DISCORD_TOKEN")
