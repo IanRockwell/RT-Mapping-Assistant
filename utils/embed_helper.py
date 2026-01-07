@@ -7,7 +7,7 @@ EMBED_COLORS = {
     "info": 0x5DADE2
 }
 
-def embed_generate(type: str, title: str, description: str = None) -> discord.Embed:
+def embed_generate(type, title, description=None):
     color = EMBED_COLORS.get(type, 0x5865F2)
     return discord.Embed(title=title, description=description, color=color)
 

@@ -8,11 +8,11 @@ from apis.rhythmtyper import *
 
 class MapTools(commands.Cog):
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message):
         if message.author == self.bot.user:
             return
 
@@ -69,6 +69,6 @@ class MapTools(commands.Cog):
         await message.channel.send(embed=embed) 
         
 
-async def setup(bot: commands.Bot):
+async def setup(bot):
     await bot.add_cog(MapTools(bot))
 

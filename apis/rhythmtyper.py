@@ -4,12 +4,12 @@ import json
 from io import BytesIO
 from PIL import Image
 
-def format_length(seconds: float) -> str:
+def format_length(seconds):
     minutes = int(seconds // 60)
     secs = int(seconds % 60)
     return f"{minutes}:{secs:02d}"
 
-async def fetch_online_beatmap_metadata(map_id: str):
+async def fetch_online_beatmap_metadata(map_id):
 
     url = f"https://us-central1-rhythm-typer.cloudfunctions.net/api/getBeatmaps?limit=1&mapsetId={map_id}"
     async with aiohttp.ClientSession() as session:
@@ -20,7 +20,7 @@ async def fetch_online_beatmap_metadata(map_id: str):
                 raise RuntimeError(f"Failed to fetch metadata: HTTP {resp.status}")
             return await resp.json()
 
-async def fetch_beatmap(map_id: str) -> BytesIO:
+async def fetch_beatmap(map_id):
 
     url = f"https://storage.googleapis.com/rhythm-typer.firebasestorage.app/beatmaps/{map_id}/{map_id}.rtm"
     
@@ -32,7 +32,7 @@ async def fetch_beatmap(map_id: str) -> BytesIO:
         
         return BytesIO(await r.read())
 
-def analyze_beatmap(zip_bytes: BytesIO) -> dict:
+def analyze_beatmap(zip_bytes):
 
     result = {
         "meta": None,
@@ -81,3 +81,33 @@ def analyze_beatmap(zip_bytes: BytesIO) -> dict:
     
     return result
 
+def calculate_drain_time(difficulty):
+    notes = difficulty.get("data", {}).get("notes", [])
+    
+    if not notes:
+        return 0
+    
+    note_times = []
+    for note in notes:
+        if note.get("type") == "hold":
+            note_times.append(note.get("startTime", 0))
+        else:
+            note_times.append(note.get("time", 0))
+
+    note_times.sort()
+    
+    if len(note_times) < 2:
+        return 0
+    
+    first_note = note_times[0]
+    last_note = note_times[-1]
+    drain_length = last_note - first_note
+    
+    gap_threshold = 5000
+    
+    for i in range(1, len(note_times)):
+        gap = note_times[i] - note_times[i - 1]
+        if gap >= gap_threshold:
+            drain_length -= gap
+    
+    return max(drain_length, 0)
