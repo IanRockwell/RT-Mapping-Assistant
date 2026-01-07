@@ -20,7 +20,7 @@ async def fetch_online_beatmap_metadata(map_id: str):
                 raise RuntimeError(f"Failed to fetch metadata: HTTP {resp.status}")
             return await resp.json()
 
-async def fetch_and_analyze_beatmap(map_id: str):
+async def fetch_beatmap(map_id: str) -> BytesIO:
 
     url = f"https://storage.googleapis.com/rhythm-typer.firebasestorage.app/beatmaps/{map_id}/{map_id}.rtm"
     
@@ -30,8 +30,10 @@ async def fetch_and_analyze_beatmap(map_id: str):
         if r.status != 200:
             raise RuntimeError(f"Failed to download map: HTTP {r.status}")
         
-        zip_bytes = BytesIO(await r.read())
-    
+        return BytesIO(await r.read())
+
+def analyze_beatmap(zip_bytes: BytesIO) -> dict:
+
     result = {
         "meta": None,
         "difficulties": [],
