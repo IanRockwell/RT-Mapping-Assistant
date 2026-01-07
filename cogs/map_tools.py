@@ -1,9 +1,12 @@
 import re
 from datetime import datetime
+from io import BytesIO
 import discord
 from discord import app_commands
 from discord.ext import commands
 from apis.rhythmtyper import *
+from utils.embed_helper import embed_generate
+from tools.hitsound_copier import copy_hitsounds, HitsoundCopyError
 
 
 class MapTools(commands.Cog):
@@ -66,8 +69,66 @@ class MapTools(commands.Cog):
             )
             embed.add_field(name=f"{diff["name"]} | {sr:.2f} ★", value=stats, inline=True)
         
-        await message.channel.send(embed=embed) 
-        
+        await message.channel.send(embed=embed)
+
+    @app_commands.command(name="hitsounds", description="Copy hitsounds from one difficulty to all others")
+    @app_commands.describe(
+        file="The .rtm beatmap file",
+        source_difficulty="Name of the difficulty to copy hitsounds from"
+    )
+    async def hitsounds_copy(
+        self,
+        interaction: discord.Interaction,
+        file: discord.Attachment,
+        source_difficulty: str
+    ):
+        if not file.filename.endswith('.rtm'):
+            embed = embed_generate(
+                type="error",
+                title="Invalid File",
+                description="Please provide a valid `.rtm` file."
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+        await interaction.response.defer()
+
+        try:
+            zip_bytes = BytesIO(await file.read())
+            output, stats = copy_hitsounds(zip_bytes, source_difficulty)
+            
+            output_filename = file.filename.replace('.rtm', '_hitsounded.rtm')
+            
+            embed = embed_generate(
+                type="success",
+                title="Hitsounds Copied",
+                description=(
+                    f"Copied hitsounds from **{stats['source_name']}** to all other difficulties.\n\n"
+                    f"**Modified:** {stats['modified_notes']} notes\n"
+                    f"**Difficulties:** {stats['target_difficulties']}\n\n"
+                    f"❗This feature is __experimental__. Be sure to double check the hitsounds. ❗"
+                )
+            )
+            await interaction.followup.send(
+                embed=embed,
+                file=discord.File(output, filename=output_filename)
+            )
+            
+        except HitsoundCopyError as e:
+            embed = embed_generate(
+                type="error",
+                title="Hitsound Copy Failed",
+                description=str(e)
+            )
+            await interaction.followup.send(embed=embed)
+        except Exception as e:
+            embed = embed_generate(
+                type="error",
+                title="Unexpected Error",
+                description=str(e)
+            )
+            await interaction.followup.send(embed=embed)
+
 
 async def setup(bot):
     await bot.add_cog(MapTools(bot))
