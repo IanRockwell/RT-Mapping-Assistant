@@ -17,19 +17,39 @@ class MapTools(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        if message.author == self.bot.user:
+    @app_commands.command(name="map", description="Get info about a beatmap from a URL")
+    @app_commands.describe(url="URL to the beatmap")
+    async def map_info(self, interaction: discord.Interaction, url: str):
+        match = re.search(r"rhythmtyper\.net/beatmap/([a-zA-Z0-9]+)", url)
+        if not match:
+            embed = embed_generate(
+                type="error",
+                title="Invalid URL",
+                description="Could not extract beatmap ID from the provided URL."
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
             return
 
-        beatmap_match = re.search(r'rhythmtyper\.net/beatmap/([a-zA-Z0-9]+)', message.content)
-        if not beatmap_match:
+        await interaction.response.defer()
+
+        map_id = match.group(1)
+
+        try:
+            metadata = await fetch_online_beatmap_metadata(map_id)
+        except ValueError as e:
+            embed = embed_generate(type="error", title="Not Found", description=str(e))
+            await interaction.followup.send(embed=embed)
+            return
+        except RuntimeError as e:
+            embed = embed_generate(type="error", title="Error", description=str(e))
+            await interaction.followup.send(embed=embed)
             return
 
-        map_id = beatmap_match.group(1)
-        
-        metadata = await fetch_online_beatmap_metadata(map_id)
-        
+        if not metadata.get("beatmaps"):
+            embed = embed_generate(type="error", title="Not Found", description="No beatmap found with that ID.")
+            await interaction.followup.send(embed=embed)
+            return
+
         beatmap = metadata["beatmaps"][0]
         title = beatmap["songName"]
         artist = beatmap["artistName"]
@@ -38,10 +58,9 @@ class MapTools(commands.Cog):
         bpm = beatmap["bpm"]
         status = beatmap["status"]
         background_url = beatmap["backgroundImageUrl"]
-        language = beatmap["language"]
-        
+
         plays = beatmap["playCount"]
-        
+
         if status == "ranked":
             date_str = beatmap["rankedDate"]
             date = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
@@ -50,15 +69,16 @@ class MapTools(commands.Cog):
             last_updated = beatmap["lastUpdatedAt"]
             date = datetime.fromtimestamp(last_updated["_seconds"])
             date_text = f"Updated {date.strftime('%b %d, %Y')}"
-        
+
         embed = discord.Embed(
             title=f"{artist} - {title} by {mapper}",
             description=f"Length: {format_length(length)} | BPM: {bpm}",
+            url=url,
             color=discord.Color.blurple()
         )
         embed.set_thumbnail(url=background_url)
         embed.set_footer(text=f"{status.capitalize()} | {plays} plays | {date_text}")
-        
+
         difficulties = beatmap["difficulties"]
         sorted_diffs = sorted(difficulties, key=lambda d: d.get("starRating", 0), reverse=True)
         for diff in sorted_diffs:
@@ -66,13 +86,13 @@ class MapTools(commands.Cog):
             od = diff.get("overallDifficulty", 0)
             diff_length = diff.get("length", 0)
             objects = diff.get("noteCount", 0) + diff.get("holdCount", 0)
-            
+
             stats = (
                 f"- OD: {od:.2f}\n- Length: {format_length(diff_length)}\n- Objects: {objects}"
             )
-            embed.add_field(name=f"{diff["name"]} | {sr:.2f} ★", value=stats, inline=True)
-        
-        await message.channel.send(embed=embed)
+            embed.add_field(name=f"{diff['name']} | {sr:.2f} ★", value=stats, inline=True)
+
+        await interaction.followup.send(embed=embed)
 
     @app_commands.command(name="copyhitsounds", description="Copy hitsounds from one difficulty to all others")
     @app_commands.describe(
