@@ -15,7 +15,7 @@ def check_spread_requirements(result):
     
     if shortest_seconds < 30:
         return CheckResult(
-            CheckStatus.ERROR,
+            CheckStatus.FAIL,
             "Spread Requirements",
             f"Shortest difficulty is less than 30 seconds. ({formatted_length})"
         )
