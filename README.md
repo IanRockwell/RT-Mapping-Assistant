@@ -15,7 +15,7 @@ When a RhythmTyper beatmap link is posted in chat, the bot automatically generat
 
 ## Commands
 
-### /verify
+### /verifymap
 
 Verify a beatmap for potential issues before ranking.
 
