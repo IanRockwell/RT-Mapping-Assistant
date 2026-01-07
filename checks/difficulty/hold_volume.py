@@ -17,7 +17,7 @@ def check_hold_volume(difficulty):
         return CheckResult(
             CheckStatus.WARNING,
             "Hold Volume",
-            f"{len(loud_holds)} held note(s) have a hold volume over 70. Be aware these may be unintentionally obnoxious."
+            f"{len(loud_holds)} held note(s) have a hold loop volume over 70. Be aware these may be unintentionally obnoxious."
         )
     
     return CheckResult(CheckStatus.PASS, "Hold Volume")
