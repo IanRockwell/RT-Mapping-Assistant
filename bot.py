@@ -11,7 +11,7 @@ logging.basicConfig(
     level=logging.INFO,
     format=log_format,
     handlers=[
-        logging.FileHandler("bot.log", encoding="utf-8"),
+        logging.FileHandler("bot.log", mode="w", encoding="utf-8"),
         logging.StreamHandler()
     ]
 )
