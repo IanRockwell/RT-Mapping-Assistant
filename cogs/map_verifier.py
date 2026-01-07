@@ -24,7 +24,7 @@ class MapVerifier(commands.Cog):
         if not (fails or warnings or infos):
             return None
 
-        color = color_override or (0xED4245 if fails else 0xFEE75C if warnings else 0x5DADE2)
+        color = color_override or (0xED4245 if fails else 0xFEE75C if warnings else 0x57F287)
         embed = discord.Embed(title=title, description=description, color=color)
 
         if infos:
@@ -119,15 +119,19 @@ class MapVerifier(commands.Cog):
             for diff in difficulties:
                 diff_name = diff.get("data", {}).get("name", "Unknown")
                 diff_filename = diff.get("filename", "Unknown")
+                drain_time_ms = calculate_drain_time(diff)
+                drain_time_formatted = format_length(drain_time_ms / 1000)
+                diff_description = f"Drain Time: {drain_time_formatted}\nFile Name: {diff_filename}"
+                
                 diff_results = run_difficulty_checks(diff)
                 
-                diff_embed = self.build_results_embed(f"Difficulty: {diff_name}", diff_results, description=diff_filename)
+                diff_embed = self.build_results_embed(f"Difficulty: {diff_name}", diff_results, description=diff_description)
                 
                 if diff_embed:
                     await asyncio.sleep(1)
                     await interaction.followup.send(embed=diff_embed)
                 else:
-                    embed = embed_generate(type="success", title=f"Difficulty: {diff_name}", description=f"{diff_filename}\n\nAll checks passed!")
+                    embed = embed_generate(type="success", title=f"Difficulty: {diff_name}", description=f"{diff_description}\n\nAll checks passed!")
                     await asyncio.sleep(1)
                     await interaction.followup.send(embed=embed)
         
