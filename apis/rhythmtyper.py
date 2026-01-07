@@ -89,32 +89,40 @@ def analyze_beatmap(zip_bytes):
     return result
 
 def calculate_drain_time(difficulty):
-    notes = difficulty.get("data", {}).get("notes", [])
+    data = difficulty.get("data", {})
+    notes = data.get("notes", [])
+    typing_sections = data.get("typingSections", [])
     
-    if not notes:
+    if not notes and not typing_sections:
         return 0
     
-    note_times = []
+    # Collect all event times (notes and typing sections)
+    event_times = []
+    
     for note in notes:
         if note.get("type") == "hold":
-            note_times.append(note.get("startTime", 0))
-            note_times.append(note.get("endTime", 0))
+            event_times.append(note.get("startTime", 0))
+            event_times.append(note.get("endTime", 0))
         else:
-            note_times.append(note.get("time", 0))
-
-    note_times.sort()
+            event_times.append(note.get("time", 0))
     
-    if len(note_times) < 2:
+    for section in typing_sections:
+        event_times.append(section.get("startTime", 0))
+        event_times.append(section.get("endTime", 0))
+
+    event_times.sort()
+    
+    if len(event_times) < 2:
         return 0
     
-    first_note = note_times[0]
-    last_note = note_times[-1]
-    drain_length = last_note - first_note
+    first_event = event_times[0]
+    last_event = event_times[-1]
+    drain_length = last_event - first_event
     
     gap_threshold = 5000
     
-    for i in range(1, len(note_times)):
-        gap = note_times[i] - note_times[i - 1]
+    for i in range(1, len(event_times)):
+        gap = event_times[i] - event_times[i - 1]
         if gap >= gap_threshold:
             drain_length -= gap
     
