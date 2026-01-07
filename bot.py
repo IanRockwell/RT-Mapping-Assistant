@@ -16,6 +16,7 @@ load_dotenv()
 intents = discord.Intents.default()
 
 bot = commands.Bot(
+    command_prefix="!",
     intents=intents,
     description="A simple Discord bot with cogs"
 )
