@@ -44,10 +44,10 @@ class MapVerifier(commands.Cog):
 
         return embed
 
-    @app_commands.command(name="verify", description="Verify a beatmap from a URL or file attachment")
+    @app_commands.command(name="verifymap", description="Verify a beatmap from a URL or file attachment")
     @app_commands.describe(
         url="URL to the beatmap file",
-        file="Beatmap file attachment"
+        file="The .rtm beatmap file"
     )
     async def verify(
         self,
