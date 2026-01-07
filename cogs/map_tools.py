@@ -71,7 +71,7 @@ class MapTools(commands.Cog):
         
         await message.channel.send(embed=embed)
 
-    @app_commands.command(name="hitsounds", description="Copy hitsounds from one difficulty to all others")
+    @app_commands.command(name="copyhitsounds", description="Copy hitsounds from one difficulty to all others")
     @app_commands.describe(
         file="The .rtm beatmap file",
         source_difficulty="Name of the difficulty to copy hitsounds from"
