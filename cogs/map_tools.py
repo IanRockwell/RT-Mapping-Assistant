@@ -6,7 +6,7 @@ from discord import app_commands
 from discord.ext import commands
 from apis.rhythmtyper import *
 from utils.embed_helper import embed_generate
-from tools.hitsound_copier import copy_hitsounds, HitsoundCopyError
+from tools.hitsound_copier import copy_hitsounds
 
 
 class MapTools(commands.Cog):
@@ -114,17 +114,10 @@ class MapTools(commands.Cog):
                 file=discord.File(output, filename=output_filename)
             )
             
-        except HitsoundCopyError as e:
-            embed = embed_generate(
-                type="error",
-                title="Hitsound Copy Failed",
-                description=str(e)
-            )
-            await interaction.followup.send(embed=embed)
         except Exception as e:
             embed = embed_generate(
                 type="error",
-                title="Unexpected Error",
+                title="Hitsound Copy Failed",
                 description=str(e)
             )
             await interaction.followup.send(embed=embed)

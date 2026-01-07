@@ -3,10 +3,6 @@ import zipfile
 from io import BytesIO
 
 
-class HitsoundCopyError(Exception):
-    pass
-
-
 TIME_TOLERANCE_MS = 5
 
 
@@ -89,7 +85,7 @@ def copy_hitsounds(zip_bytes, source_difficulty_name):
                     other_files[f] = z.read(f)
             
             if not meta:
-                raise HitsoundCopyError("Invalid RTM file: missing meta.json")
+                raise ValueError("Invalid RTM file: missing meta.json")
             
             source_diff = None
             source_filename = None
@@ -101,7 +97,7 @@ def copy_hitsounds(zip_bytes, source_difficulty_name):
             
             if not source_diff:
                 diff_names = [d.get("name", "Unknown") for d in difficulties.values()]
-                raise HitsoundCopyError(
+                raise ValueError(
                     f"Difficulty '{source_difficulty_name}' not found. "
                     f"Available difficulties: {', '.join(diff_names)}"
                 )
@@ -178,6 +174,6 @@ def copy_hitsounds(zip_bytes, source_difficulty_name):
             }
             
     except zipfile.BadZipFile:
-        raise HitsoundCopyError("Invalid RTM file: not a valid zip archive")
+        raise ValueError("Invalid RTM file: not a valid zip archive")
     except json.JSONDecodeError:
-        raise HitsoundCopyError("Invalid RTM file: contains malformed JSON")
+        raise ValueError("Invalid RTM file: contains malformed JSON")
