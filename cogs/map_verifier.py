@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -9,6 +10,8 @@ import json
 from utils.embed_helper import *
 from apis.rhythmtyper import *
 from checks import run_meta_checks, run_difficulty_checks, CheckStatus
+
+logger = logging.getLogger(__name__)
 
 
 class MapVerifier(commands.Cog):
@@ -67,6 +70,8 @@ class MapVerifier(commands.Cog):
         try:
             result = None
             
+            map_id = None
+            
             if url:
                 match = re.search(r"rhythmtyper\.net/beatmap/([a-zA-Z0-9]+)", url)
                 if not match:
@@ -96,14 +101,17 @@ class MapVerifier(commands.Cog):
                     await interaction.followup.send(embed=embed)
                     return
             
-            # This is really helpful for debugging
-            #with open("verification_result.txt", "w", encoding="utf-8") as f:
-            #    f.write(json.dumps(result, indent=2))
-            
             if not result or not isinstance(result, dict) or not result.get("meta"):
                 embed = embed_generate(type="error", title="Invalid Map File", description="The provided file could not be parsed as a valid beatmap.")
                 await interaction.followup.send(embed=embed)
                 return
+            
+            map_name = result.get("meta", {}).get("songName", "Unknown")
+            mapper_name = result.get("meta", {}).get("mapper", "Unknown")
+            if map_id:
+                logger.info(f"{interaction.user} checked map '{map_name}' by {mapper_name} (ID: {map_id})")
+            else:
+                logger.info(f"{interaction.user} checked map '{map_name}' by {mapper_name} (file: {file.filename})")
             
             meta_results = run_meta_checks(result)
             meta_embed = self.build_results_embed("Mapset Verification Results", meta_results)

@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import datetime
 from io import BytesIO
@@ -7,6 +8,8 @@ from discord.ext import commands
 from apis.rhythmtyper import *
 from utils.embed_helper import embed_generate
 from tools.hitsound_copier import copy_hitsounds
+
+logger = logging.getLogger(__name__)
 
 
 class MapTools(commands.Cog):
@@ -70,6 +73,8 @@ class MapTools(commands.Cog):
             embed.add_field(name=f"{diff["name"]} | {sr:.2f} ★", value=stats, inline=True)
         
         await message.channel.send(embed=embed)
+        
+        logger.info(f"{message.author} viewed map '{title}' by {mapper} (ID: {map_id})")
 
     @app_commands.command(name="copyhitsounds", description="Copy hitsounds from one difficulty to all others")
     @app_commands.describe(
@@ -113,6 +118,8 @@ class MapTools(commands.Cog):
                 embed=embed,
                 file=discord.File(output, filename=output_filename)
             )
+            
+            logger.info(f"{interaction.user} copied hitsounds from '{stats['source_name']}' in file: {file.filename}")
             
         except Exception as e:
             embed = embed_generate(
