@@ -4,6 +4,7 @@ from discord import app_commands
 from discord.ext import commands
 from io import BytesIO
 import re
+import json
 
 from utils.embed_helper import *
 from apis.rhythmtyper import *
@@ -63,62 +64,76 @@ class MapVerifier(commands.Cog):
 
         await interaction.response.defer()
 
-        result = None
-        
-        if url:
-            match = re.search(r"rhythmtyper\.net/beatmap/([a-zA-Z0-9]+)", url)
-            if not match:
-                embed = embed_generate(type="error", title="Invalid URL", description="Could not extract beatmap ID from the provided URL.")
-                await interaction.followup.send(embed=embed)
-                return
-            map_id = match.group(1)
-
-            try:
-                zip_bytes = await fetch_beatmap(map_id)
-                result = analyze_beatmap(zip_bytes)
-            except ValueError as e:
-                embed = embed_generate(type="error", title="Not Found", description=str(e))
-                await interaction.followup.send(embed=embed)
-                return
-            except RuntimeError as e:
-                embed = embed_generate(type="error", title="Error", description=str(e))
-                await interaction.followup.send(embed=embed)
-                return
-
-        elif file:
-            try:
-                zip_bytes = BytesIO(await file.read())
-                result = analyze_beatmap(zip_bytes)
-            except Exception as e:
-                embed = embed_generate(type="error", title="Error", description=str(e))
-                await interaction.followup.send(embed=embed)
-                return
-        
-        meta_results = run_meta_checks(result)
-        meta_embed = self.build_results_embed("Mapset Verification Results", meta_results)
-        
-        if meta_embed:
-            await interaction.followup.send(embed=meta_embed)
-        else:
-            embed = embed_generate(type="success", title="Mapset Checks Passed", description="No mapset-level issues found!")
-            await interaction.followup.send(embed=embed)
-
-        difficulties = result.get("difficulties", [])
-        
-        for diff in difficulties:
-            diff_name = diff.get("data", {}).get("name", "Unknown")
-            diff_filename = diff.get("filename", "Unknown")
-            diff_results = run_difficulty_checks(diff)
+        try:
+            result = None
             
-            diff_embed = self.build_results_embed(f"Difficulty: {diff_name}", diff_results, description=diff_filename)
+            if url:
+                match = re.search(r"rhythmtyper\.net/beatmap/([a-zA-Z0-9]+)", url)
+                if not match:
+                    embed = embed_generate(type="error", title="Invalid URL", description="Could not extract beatmap ID from the provided URL.")
+                    await interaction.followup.send(embed=embed)
+                    return
+                map_id = match.group(1)
+
+                try:
+                    zip_bytes = await fetch_beatmap(map_id)
+                    result = analyze_beatmap(zip_bytes)
+                except ValueError as e:
+                    embed = embed_generate(type="error", title="Not Found", description=str(e))
+                    await interaction.followup.send(embed=embed)
+                    return
+                except RuntimeError as e:
+                    embed = embed_generate(type="error", title="Error", description=str(e))
+                    await interaction.followup.send(embed=embed)
+                    return
+
+            elif file:
+                try:
+                    zip_bytes = BytesIO(await file.read())
+                    result = analyze_beatmap(zip_bytes)
+                except Exception:
+                    embed = embed_generate(type="error", title="Invalid Map File", description="The provided file could not be parsed as a valid beatmap.")
+                    await interaction.followup.send(embed=embed)
+                    return
             
-            if diff_embed:
-                await asyncio.sleep(1)
-                await interaction.followup.send(embed=diff_embed)
+            # This is really helpful for debugging
+            #with open("verification_result.txt", "w", encoding="utf-8") as f:
+            #    f.write(json.dumps(result, indent=2))
+            
+            if not result or not isinstance(result, dict) or not result.get("meta"):
+                embed = embed_generate(type="error", title="Invalid Map File", description="The provided file could not be parsed as a valid beatmap.")
+                await interaction.followup.send(embed=embed)
+                return
+            
+            meta_results = run_meta_checks(result)
+            meta_embed = self.build_results_embed("Mapset Verification Results", meta_results)
+            
+            if meta_embed:
+                await interaction.followup.send(embed=meta_embed)
             else:
-                embed = embed_generate(type="success", title=f"Difficulty: {diff_name}", description=f"{diff_filename}\n\nAll checks passed!")
-                await asyncio.sleep(1)
+                embed = embed_generate(type="success", title="Mapset Checks Passed", description="No mapset-level issues found!")
                 await interaction.followup.send(embed=embed)
+
+            difficulties = result.get("difficulties", [])
+            
+            for diff in difficulties:
+                diff_name = diff.get("data", {}).get("name", "Unknown")
+                diff_filename = diff.get("filename", "Unknown")
+                diff_results = run_difficulty_checks(diff)
+                
+                diff_embed = self.build_results_embed(f"Difficulty: {diff_name}", diff_results, description=diff_filename)
+                
+                if diff_embed:
+                    await asyncio.sleep(1)
+                    await interaction.followup.send(embed=diff_embed)
+                else:
+                    embed = embed_generate(type="success", title=f"Difficulty: {diff_name}", description=f"{diff_filename}\n\nAll checks passed!")
+                    await asyncio.sleep(1)
+                    await interaction.followup.send(embed=embed)
+        
+        except Exception:
+            embed = embed_generate(type="error", title="Invalid Map File", description="The provided file could not be parsed as a valid beatmap.")
+            await interaction.followup.send(embed=embed)
 
 
 async def setup(bot):
