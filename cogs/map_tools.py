@@ -73,8 +73,6 @@ class MapTools(commands.Cog):
             embed.add_field(name=f"{diff["name"]} | {sr:.2f} ★", value=stats, inline=True)
         
         await message.channel.send(embed=embed)
-        
-        logger.info(f"{message.author} viewed map '{title}' by {mapper} (ID: {map_id})")
 
     @app_commands.command(name="copyhitsounds", description="Copy hitsounds from one difficulty to all others")
     @app_commands.describe(
@@ -96,7 +94,7 @@ class MapTools(commands.Cog):
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
 
-        await interaction.response.defer()
+        await interaction.response.defer(ephemeral=True)
 
         try:
             zip_bytes = BytesIO(await file.read())
@@ -116,10 +114,9 @@ class MapTools(commands.Cog):
             )
             await interaction.followup.send(
                 embed=embed,
-                file=discord.File(output, filename=output_filename)
+                file=discord.File(output, filename=output_filename),
+                ephemeral=True
             )
-            
-            logger.info(f"{interaction.user} copied hitsounds from '{stats['source_name']}' in file: {file.filename}")
             
         except Exception as e:
             embed = embed_generate(
@@ -127,7 +124,7 @@ class MapTools(commands.Cog):
                 title="Hitsound Copy Failed",
                 description=str(e)
             )
-            await interaction.followup.send(embed=embed)
+            await interaction.followup.send(embed=embed, ephemeral=True)
 
 
 async def setup(bot):
