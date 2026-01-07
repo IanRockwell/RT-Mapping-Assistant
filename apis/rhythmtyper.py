@@ -5,21 +5,25 @@ from io import BytesIO
 from PIL import Image
 
 async def fetch_online_beatmap_metadata(map_id: str):
+    
     url = f"https://us-central1-rhythm-typer.cloudfunctions.net/api/getBeatmaps?limit=1&mapsetId={map_id}"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
-            resp.raise_for_status()
+            if resp.status == 403:
+                raise ValueError(f"Map with id {map_id} does not exist.")
+            if resp.status != 200:
+                raise RuntimeError(f"Failed to fetch metadata: HTTP {resp.status}")
             return await resp.json()
 
 async def fetch_and_analyze_beatmap(map_id: str):
-    """Download and analyze a beatmap, keeping everything in memory."""
+
     url = f"https://storage.googleapis.com/rhythm-typer.firebasestorage.app/beatmaps/{map_id}/{map_id}.rtm"
     
     async with aiohttp.ClientSession() as s, s.get(url) as r:
         if r.status == 403:
-            raise Exception(f"Map with id {map_id} does not exist.")
+            raise ValueError(f"Map with id {map_id} does not exist.")
         if r.status != 200:
-            raise Exception(f"Failed to download map: HTTP {r.status}")
+            raise RuntimeError(f"Failed to download map: HTTP {r.status}")
         
         zip_bytes = BytesIO(await r.read())
     
