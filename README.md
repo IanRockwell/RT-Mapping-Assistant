@@ -2,18 +2,16 @@
 
 A Discord bot designed to assist RhythmTyper mappers with beatmap verification and tooling.
 
-## Features
+## Commands
 
-### Automatic Beatmap Preview
+### /map
 
-When a RhythmTyper beatmap link is posted in chat, the bot automatically generates an embed displaying:
+Get info about a beatmap from a URL. Displays:
 
 - Song title, artist, and mapper
 - Length and BPM
 - Ranked status and play count
 - All difficulties with their star rating, OD, length, and object count
-
-## Commands
 
 ### /verifymap
 
