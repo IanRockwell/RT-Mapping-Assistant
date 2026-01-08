@@ -3,9 +3,6 @@ from checks.base import CheckResult, CheckStatus
 
 
 def check_gder_tags(result):
-    """
-    Check if difficulty names with possessive forms ('s or s') have the owner in tags.
-    """
     meta = result.get("meta", {})
     tags = meta.get("tags", "").lower().split()
     difficulties = result.get("difficulties", [])
