@@ -11,6 +11,7 @@ GENRES = [
     "metal",
     "indie",
     "r&b",
+    "bms",
     "country",
     "folk",
     "punk",
