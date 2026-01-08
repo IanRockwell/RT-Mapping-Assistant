@@ -22,6 +22,7 @@ Verify a beatmap for potential issues before ranking.
 | Check | Description |
 |-------|-------------|
 | **Background Check** | Warns if the background image exceeds 1920x1080 or is not 16:9 aspect ratio. |
+| **GDer Tags Check** | Warns if a difficulty name contains a possessive form ('s or s') but the name isn't found in the tags. |
 | **Preview Point** | Fails if no preview point is set in the map metadata. |
 | **Spread Requirements** | Validates drain time requirements and provides guidance on required difficulty spread based on song length. Maps under 30 seconds fail. |
 | **Tags Check** | Warns if the tags field is empty. |
