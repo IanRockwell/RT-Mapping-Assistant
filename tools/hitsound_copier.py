@@ -27,7 +27,7 @@ def _extract_sound_events(notes):
                     sample_set,
                     hold
                 ))
-            
+
             end = hitsound.get("end", {})
             if end.get("sounds"):
                 events.append((

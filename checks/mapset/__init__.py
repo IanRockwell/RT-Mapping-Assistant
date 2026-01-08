@@ -4,6 +4,7 @@ from .tags_check import check_tags
 from .preview_check import check_preview
 from .gder_tags_check import check_gder_tags
 from .genre_check import check_genre
+from .hitsound_consistency_check import check_hitsound_consistency
 
 MAPSET_CHECKS = [
     check_spread_requirements,
@@ -12,5 +13,6 @@ MAPSET_CHECKS = [
     check_preview,
     check_gder_tags,
     check_genre,
+    check_hitsound_consistency,
 ]
 
