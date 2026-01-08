@@ -89,7 +89,7 @@ def check_hitsound_consistency(result):
         }
     
     inconsistencies = []
-    diff_names = list(diff_data.keys())[:5]  # Limit to 5 diffs
+    diff_names = list(diff_data.keys())
     
     for i, diff1_name in enumerate(diff_names):
         for diff2_name in diff_names[i + 1:]:
@@ -128,25 +128,32 @@ def check_hitsound_consistency(result):
     if not inconsistencies:
         return CheckResult(CheckStatus.PASS, "Hitsound Consistency")
     
+    # Build the attachment content with all differences
+    attachment_lines = []
+    for inc in inconsistencies:
+        times = inc["times"]
+        formatted = [format_timestamp(t) for t in times]
+        attachment_lines.append(f"Hitsound differences between '{inc['diff1']}' and '{inc['diff2']}' ({len(times)} total):")
+        for i in range(0, len(formatted), 10):
+            attachment_lines.append(", ".join(formatted[i:i + 10]))
+        attachment_lines.append("")
+    
+    attachment_content = "\n".join(attachment_lines)
+    
+    # Build summary message
     messages = ["Ensure these are intentional. If they're not, consider using __/copyhitsounds__ to make them consistent."]
     for inc in inconsistencies[:5]:  # Limit to 5 messages
         times = inc["times"]
-        
-        if len(times) > 40:
-            messages.append(
-                f"- '{inc['diff1']}' and '{inc['diff2']}' have significantly mismatched hitsounds ({len(times)} differences found)"
-            )
-        else:
-            formatted = [format_timestamp(t) for t in times]
-            messages.append(
-                f"- '{inc['diff1']}' and '{inc['diff2']}' have mismatched hitsounds at {', '.join(formatted)}"
-            )
+        messages.append(
+            f"- '{inc['diff1']}' and '{inc['diff2']}' have mismatched hitsounds ({len(times)} differences)"
+        )
     
-    if len(inconsistencies) >= 5:
+    if len(inconsistencies) > 5:
         messages.append("- etc.")
     
     return CheckResult(
         CheckStatus.WARNING,
         "Hitsound Consistency",
-        "\n".join(messages)
+        "\n".join(messages),
+        attachment=("hitsound_differences.txt", attachment_content)
     )

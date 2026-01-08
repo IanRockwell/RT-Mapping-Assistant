@@ -122,9 +122,19 @@ class MapVerifier(commands.Cog):
             meta_results = run_meta_checks(result)
             meta_embed = self.build_results_embed("Mapset Verification Results", meta_results)
             
+            # Collect any attachments from check results
+            attachments = []
+            for r in meta_results:
+                if r.attachment:
+                    filename, content = r.attachment
+                    attachments.append(discord.File(BytesIO(content.encode('utf-8')), filename=filename))
+            
             if meta_embed:
                 meta_embed.set_footer(text="ℹ️ Info • ⚠️ Potential issue • ❌ Unrankable")
-                await interaction.followup.send(embed=meta_embed, ephemeral=ephemeral)
+                if attachments:
+                    await interaction.followup.send(embed=meta_embed, files=attachments, ephemeral=ephemeral)
+                else:
+                    await interaction.followup.send(embed=meta_embed, ephemeral=ephemeral)
             else:
                 embed = embed_generate(type="success", title="Mapset Checks Passed", description="No mapset-level issues found!")
                 await interaction.followup.send(embed=embed, ephemeral=ephemeral)
