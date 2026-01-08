@@ -15,14 +15,14 @@ def check_od(difficulty):
         return CheckResult(
             CheckStatus.WARNING,
             "OD Check",
-            f"OD is low ({od}). Ensure this makes sense for your difficulty."
+            f"OD is low ({od}). Ensure this makes sense."
         )
     
     if od > 8:
         return CheckResult(
             CheckStatus.WARNING,
             "OD Check",
-            f"OD is high ({od}). Ensure this makes sense for your difficulty."
+            f"OD is high ({od}). Ensure this makes sense."
         )
     
     return CheckResult(
