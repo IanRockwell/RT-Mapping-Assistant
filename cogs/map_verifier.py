@@ -47,13 +47,15 @@ class MapVerifier(commands.Cog):
     @app_commands.command(name="verifymap", description="Verify a beatmap from a URL or file attachment")
     @app_commands.describe(
         url="URL to the beatmap file",
-        file="The .rtm beatmap file"
+        file="The .rtm beatmap file",
+        ephemeral="Make the response only visible to you (default: False)"
     )
     async def verify(
         self,
         interaction: discord.Interaction,
         url: str = None,
-        file: discord.Attachment = None
+        file: discord.Attachment = None,
+        ephemeral: bool = False
     ):
         if not url and not file:
             embed = embed_generate(type="error", title="Missing Input", description="Please provide either a URL or attach a file to verify.")
@@ -65,7 +67,7 @@ class MapVerifier(commands.Cog):
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
 
-        await interaction.response.defer()
+        await interaction.response.defer(ephemeral=ephemeral)
 
         try:
             result = None
@@ -76,7 +78,7 @@ class MapVerifier(commands.Cog):
                 match = re.search(r"rhythmtyper\.net/beatmap/([a-zA-Z0-9]+)", url)
                 if not match:
                     embed = embed_generate(type="error", title="Invalid URL", description="Could not extract beatmap ID from the provided URL.")
-                    await interaction.followup.send(embed=embed)
+                    await interaction.followup.send(embed=embed, ephemeral=ephemeral)
                     return
                 map_id = match.group(1)
 
@@ -85,11 +87,11 @@ class MapVerifier(commands.Cog):
                     result = analyze_beatmap(zip_bytes)
                 except ValueError as e:
                     embed = embed_generate(type="error", title="Not Found", description=str(e))
-                    await interaction.followup.send(embed=embed)
+                    await interaction.followup.send(embed=embed, ephemeral=ephemeral)
                     return
                 except RuntimeError as e:
                     embed = embed_generate(type="error", title="Error", description=str(e))
-                    await interaction.followup.send(embed=embed)
+                    await interaction.followup.send(embed=embed, ephemeral=ephemeral)
                     return
 
             elif file:
@@ -98,12 +100,12 @@ class MapVerifier(commands.Cog):
                     result = analyze_beatmap(zip_bytes)
                 except Exception:
                     embed = embed_generate(type="error", title="Invalid Map File", description="The provided file could not be parsed as a valid beatmap.")
-                    await interaction.followup.send(embed=embed)
+                    await interaction.followup.send(embed=embed, ephemeral=ephemeral)
                     return
             
             if not result or not isinstance(result, dict) or not result.get("meta"):
                 embed = embed_generate(type="error", title="Invalid Map File", description="The provided file could not be parsed as a valid beatmap.")
-                await interaction.followup.send(embed=embed)
+                await interaction.followup.send(embed=embed, ephemeral=ephemeral)
                 return
             
             map_name = result.get("meta", {}).get("songName", "Unknown")
@@ -117,10 +119,10 @@ class MapVerifier(commands.Cog):
             meta_embed = self.build_results_embed("Mapset Verification Results", meta_results)
             
             if meta_embed:
-                await interaction.followup.send(embed=meta_embed)
+                await interaction.followup.send(embed=meta_embed, ephemeral=ephemeral)
             else:
                 embed = embed_generate(type="success", title="Mapset Checks Passed", description="No mapset-level issues found!")
-                await interaction.followup.send(embed=embed)
+                await interaction.followup.send(embed=embed, ephemeral=ephemeral)
 
             difficulties = result.get("difficulties", [])
             
@@ -137,15 +139,15 @@ class MapVerifier(commands.Cog):
                 
                 if diff_embed:
                     await asyncio.sleep(1)
-                    await interaction.followup.send(embed=diff_embed)
+                    await interaction.followup.send(embed=diff_embed, ephemeral=ephemeral)
                 else:
                     embed = embed_generate(type="success", title=f"Difficulty: {diff_name}", description=f"{diff_description}\n\nAll checks passed!")
                     await asyncio.sleep(1)
-                    await interaction.followup.send(embed=embed)
+                    await interaction.followup.send(embed=embed, ephemeral=ephemeral)
         
         except Exception:
             embed = embed_generate(type="error", title="Invalid Map File", description="The provided file could not be parsed as a valid beatmap.")
-            await interaction.followup.send(embed=embed)
+            await interaction.followup.send(embed=embed, ephemeral=ephemeral)
 
 
 async def setup(bot):
