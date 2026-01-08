@@ -36,6 +36,7 @@ Verify a beatmap for potential issues before ranking.
 | **Hold Volume** | Warns if any held notes have a hold loop volume exceeding 70, which may be obnoxiously loud. |
 | **Key Count** | Fails if more than 10 keys are pressed simultaneously at any point. |
 | **OD Check** | Fails if OD is not set. Warns if OD is unusually low (below 2) or high (above 8). |
+| **Typing WPM** | Warns if any typing section requires more than 70 WPM to complete. |
 
 ### /copyhitsounds
 
