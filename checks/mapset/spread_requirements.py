@@ -24,19 +24,19 @@ def check_spread_requirements(result):
         return CheckResult(
             CheckStatus.INFO,
             "Spread Requirements",
-            f"Shortest difficulty is {formatted_length}. Ensure your lowest difficulty is at most a Normal, and all in-between difficulties are included."
+            f"Shortest difficulty is {formatted_length}. Ensure your lowest difficulty isn't any harder than a Normal, and all in-between difficulties are included."
         )
     elif shortest_seconds < 135:
         return CheckResult(
             CheckStatus.INFO,
             "Spread Requirements",
-            f"Shortest difficulty is {formatted_length}. Ensure your lowest difficulty is at most a Hard, and all in-between difficulties are included."
+            f"Shortest difficulty is {formatted_length}. Ensure your lowest difficulty isn't any harder than a Hard, and all in-between difficulties are included."
         )
     elif shortest_seconds < 180:
         return CheckResult(
             CheckStatus.INFO,
             "Spread Requirements",
-            f"Shortest difficulty is {formatted_length}. Ensure your lowest difficulty is at most an Insane, and all in-between difficulties are included."
+            f"Shortest difficulty is {formatted_length}. Ensure your lowest difficulty isn't any harder than an Insane, and all in-between difficulties are included."
         )
     
     return CheckResult(CheckStatus.PASS, "Spread Requirements")
