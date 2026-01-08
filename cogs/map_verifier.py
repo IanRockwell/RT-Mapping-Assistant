@@ -98,8 +98,9 @@ class MapVerifier(commands.Cog):
                 try:
                     zip_bytes = BytesIO(await file.read())
                     result = analyze_beatmap(zip_bytes)
-                except Exception:
-                    embed = embed_generate(type="error", title="Invalid Map File", description="The provided file could not be parsed as a valid beatmap.")
+                except Exception as e:
+                    logger.exception(f"Failed to parse beatmap file: {file.filename}")
+                    embed = embed_generate(type="error", title="Invalid Map File", description=f"The provided file could not be parsed as a valid beatmap.\n\n**Error:** `{type(e).__name__}: {e}`")
                     await interaction.followup.send(embed=embed, ephemeral=ephemeral)
                     return
             
@@ -108,8 +109,8 @@ class MapVerifier(commands.Cog):
                 await interaction.followup.send(embed=embed, ephemeral=ephemeral)
                 return
             
-            #with open("verification_result.txt", "w", encoding="utf-8") as f:
-            #    json.dump(result, f, indent=2)
+            with open("verification_result.txt", "w", encoding="utf-8") as f:
+                json.dump(result, f, indent=2)
             
             map_name = result.get("meta", {}).get("songName", "Unknown")
             mapper_name = result.get("meta", {}).get("mapper", "Unknown")
@@ -149,8 +150,9 @@ class MapVerifier(commands.Cog):
                     await asyncio.sleep(1)
                     await interaction.followup.send(embed=embed, ephemeral=ephemeral)
         
-        except Exception:
-            embed = embed_generate(type="error", title="Invalid Map File", description="The provided file could not be parsed as a valid beatmap.")
+        except Exception as e:
+            logger.exception("Unexpected error during map verification")
+            embed = embed_generate(type="error", title="Verification Error", description=f"An unexpected error occurred during verification.\n\n**Error:** `{type(e).__name__}: {e}`")
             await interaction.followup.send(embed=embed, ephemeral=ephemeral)
 
 
