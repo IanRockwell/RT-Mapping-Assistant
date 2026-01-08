@@ -98,8 +98,8 @@ class MapTools(commands.Cog):
     @app_commands.describe(
         file="The .rtm beatmap file",
         source_difficulty="Name of the difficulty to copy hitsounds from",
-        ignore_tapvolumes="Ignore tap note volumes and hold start/end volumes",
-        ignore_holdvolumes="Ignore hold note loop volumes"
+        ignore_tapvolumes="Ignore tap note volumes and hold start/end volumes (default: False)",
+        ignore_holdvolumes="Ignore hold note loop volumes (default: False)"
     )
     async def hitsounds_copy(
         self,
