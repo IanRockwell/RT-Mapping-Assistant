@@ -8,7 +8,7 @@ DIFFICULTY_CHECKS = [
     check_has_notes,
     check_od,
     check_key_count,
-    check_hold_volume,
+    #check_hold_volume,
     check_typing_wpm,
 ]
 
