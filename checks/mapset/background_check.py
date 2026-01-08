@@ -11,8 +11,8 @@ def check_background(result):
     
     warnings = []
     
-    if width > 1920 or height > 1080:
-        warnings.append(f"Background is larger than 1920x1080 ({width}x{height}).")
+    if width > 2560 or height > 1440:
+        warnings.append(f"Background is larger than 2560x1440 ({width}x{height}).")
     
     if width * 9 != height * 16:
         warnings.append("Background is not 16:9.")

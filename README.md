@@ -21,7 +21,7 @@ Verify a beatmap for potential issues before ranking.
 
 | Check | Description |
 |-------|-------------|
-| **Background Check** | Warns if the background image exceeds 1920x1080 or is not 16:9 aspect ratio. |
+| **Background Check** | Warns if the background image exceeds 2560x1440 or is not 16:9 aspect ratio. |
 | **GDer Tags Check** | Warns if a difficulty name contains a possessive form ('s or s') but the name isn't found in the tags. |
 | **Genre Check** | Warns if no recognized genre tag is found in the tags field. |
 | **Hitsound Consistency** | Warns if difficulties have mismatched hitsounds at the same timestamp (different sounds or one missing). |
