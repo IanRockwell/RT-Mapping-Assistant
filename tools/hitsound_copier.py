@@ -69,7 +69,7 @@ def _find_closest_event(events, target_time, tolerance=TIME_TOLERANCE_MS):
     return closest
 
 
-def copy_hitsounds(zip_bytes, source_difficulty_name):
+def copy_hitsounds(zip_bytes, source_difficulty_name, ignore_tapvolumes=False, ignore_holdvolumes=False):
     try:
         with zipfile.ZipFile(zip_bytes, 'r') as z:
             meta = None
@@ -126,21 +126,39 @@ def copy_hitsounds(zip_bytes, source_difficulty_name):
                             if start_match:
                                 sounds, volume, sample_set, hold_data = start_match
                                 hitsound["sampleSet"] = sample_set
-                                hitsound["start"] = {
-                                    "volume": volume,
-                                    "sounds": sounds.copy()
-                                }
+                                # Preserve original start volume if ignoring tap volumes
+                                original_start = hitsound.get("start", {})
+                                start_data = {"sounds": sounds.copy()}
+                                if ignore_tapvolumes:
+                                    if "volume" in original_start:
+                                        start_data["volume"] = original_start["volume"]
+                                else:
+                                    start_data["volume"] = volume
+                                hitsound["start"] = start_data
                                 if hold_data:
-                                    hitsound["hold"] = hold_data.copy()
+                                    # Preserve original hold volume if ignoring hold volumes
+                                    original_hold = hitsound.get("hold", {})
+                                    hold_copy = hold_data.copy()
+                                    if ignore_holdvolumes:
+                                        if "volume" in original_hold:
+                                            hold_copy["volume"] = original_hold["volume"]
+                                        else:
+                                            hold_copy.pop("volume", None)
+                                    hitsound["hold"] = hold_copy
                                 modified_count += 1
                             
                             if end_match:
                                 sounds, volume, sample_set, _ = end_match
                                 hitsound["sampleSet"] = sample_set
-                                hitsound["end"] = {
-                                    "volume": volume,
-                                    "sounds": sounds.copy()
-                                }
+                                # Preserve original end volume if ignoring tap volumes
+                                original_end = hitsound.get("end", {})
+                                end_data = {"sounds": sounds.copy()}
+                                if ignore_tapvolumes:
+                                    if "volume" in original_end:
+                                        end_data["volume"] = original_end["volume"]
+                                else:
+                                    end_data["volume"] = volume
+                                hitsound["end"] = end_data
                                 modified_count += 1
                     else:
                         tap_time = note.get("time")
@@ -148,11 +166,18 @@ def copy_hitsounds(zip_bytes, source_difficulty_name):
                         
                         if match:
                             sounds, volume, sample_set, _ = match
-                            note["hitsound"] = {
+                            # Preserve original volume if ignoring tap volumes
+                            original_hitsound = note.get("hitsound", {})
+                            tap_hitsound = {
                                 "sampleSet": sample_set,
-                                "volume": volume,
                                 "sounds": sounds.copy()
                             }
+                            if ignore_tapvolumes:
+                                if "volume" in original_hitsound:
+                                    tap_hitsound["volume"] = original_hitsound["volume"]
+                            else:
+                                tap_hitsound["volume"] = volume
+                            note["hitsound"] = tap_hitsound
                             modified_count += 1
             
             output_buffer = BytesIO()

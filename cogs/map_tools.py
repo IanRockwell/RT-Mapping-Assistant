@@ -97,13 +97,17 @@ class MapTools(commands.Cog):
     @app_commands.command(name="copyhitsounds", description="Copy hitsounds from one difficulty to all others")
     @app_commands.describe(
         file="The .rtm beatmap file",
-        source_difficulty="Name of the difficulty to copy hitsounds from"
+        source_difficulty="Name of the difficulty to copy hitsounds from",
+        ignore_tapvolumes="Ignore tap note volumes and hold start/end volumes",
+        ignore_holdvolumes="Ignore hold note loop volumes"
     )
     async def hitsounds_copy(
         self,
         interaction: discord.Interaction,
         file: discord.Attachment,
-        source_difficulty: str
+        source_difficulty: str,
+        ignore_tapvolumes: bool = False,
+        ignore_holdvolumes: bool = False
     ):
         if not file.filename.endswith('.rtm'):
             embed = embed_generate(
@@ -118,7 +122,7 @@ class MapTools(commands.Cog):
 
         try:
             zip_bytes = BytesIO(await file.read())
-            output, stats = copy_hitsounds(zip_bytes, source_difficulty)
+            output, stats = copy_hitsounds(zip_bytes, source_difficulty, ignore_tapvolumes, ignore_holdvolumes)
             
             output_filename = file.filename.replace('.rtm', '_hitsounded.rtm')
             
