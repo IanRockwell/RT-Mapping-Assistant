@@ -13,6 +13,5 @@ def check_has_notes(difficulty):
     
     return CheckResult(
         CheckStatus.PASS,
-        "Has Notes",
-        f"This difficulty has {len(notes)} note(s) placed."
+        "Has Notes"
     )
