@@ -119,6 +119,7 @@ class MapVerifier(commands.Cog):
             meta_embed = self.build_results_embed("Mapset Verification Results", meta_results)
             
             if meta_embed:
+                meta_embed.set_footer(text="ℹ️ Info • ⚠️ Potential issue • ❌ Unrankable")
                 await interaction.followup.send(embed=meta_embed, ephemeral=ephemeral)
             else:
                 embed = embed_generate(type="success", title="Mapset Checks Passed", description="No mapset-level issues found!")
