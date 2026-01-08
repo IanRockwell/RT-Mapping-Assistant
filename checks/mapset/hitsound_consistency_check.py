@@ -131,16 +131,10 @@ def check_hitsound_consistency(result):
     messages = ["Ensure these are intentional. If they're not, consider using __/copyhitsounds__ to make them consistent."]
     for inc in inconsistencies[:5]:  # Limit to 5 messages
         times = inc["times"]
-        
-        limited_times = times[:10]
-        formatted = [format_timestamp(t) for t in limited_times]
-        
-        extra = ""
-        if len(times) > 10:
-            extra = f" (+{len(times) - 10} more)"
+        formatted = [format_timestamp(t) for t in times]
         
         messages.append(
-            f"- '{inc['diff1']}' and '{inc['diff2']}' have mismatched hitsounds at {', '.join(formatted)}{extra}"
+            f"- '{inc['diff1']}' and '{inc['diff2']}' have mismatched hitsounds at {', '.join(formatted)}"
         )
     
     if len(inconsistencies) >= 5:
