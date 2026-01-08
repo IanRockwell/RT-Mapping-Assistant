@@ -3,6 +3,7 @@ import zipfile
 import json
 from io import BytesIO
 from PIL import Image
+from mutagen import File as MutagenFile
 
 def format_length(seconds):
     minutes = int(seconds // 60)
@@ -70,10 +71,21 @@ def analyze_beatmap(zip_bytes):
                         "height": img.height,
                         "size_bytes": info.file_size
                     }
-            elif f.lower().endswith((".mp3", ".ogg", ".wav")):
+            elif f.lower().startswith("audio.") and f.lower().endswith((".mp3", ".ogg", ".wav")):
+                audio_bytes = BytesIO(z.read(f))
+                audio_file = MutagenFile(audio_bytes)
+                duration = audio_file.info.length if audio_file and audio_file.info else None
+                
+                bitrate = None
+                if duration and duration > 0:
+                    bits = info.file_size * 8
+                    bitrate = (bits / duration) / 1000  # kbps
+                
                 result["audio"] = {
                     "filename": f,
-                    "size_bytes": info.file_size
+                    "size_bytes": info.file_size,
+                    "duration": duration,
+                    "bitrate": round(bitrate, 1) if bitrate else None
                 }
             elif f.lower().endswith((".mp4", ".webm")):
                 result["video"] = {
