@@ -108,7 +108,6 @@ def calculate_drain_time(difficulty):
     if not notes and not typing_sections:
         return 0
     
-    # Collect all event times (notes and typing sections)
     event_times = []
     
     for note in notes:
@@ -117,25 +116,25 @@ def calculate_drain_time(difficulty):
             event_times.append(note.get("endTime", 0))
         else:
             event_times.append(note.get("time", 0))
-    
-    for section in typing_sections:
-        event_times.append(section.get("startTime", 0))
-        event_times.append(section.get("endTime", 0))
 
     event_times.sort()
     
-    if len(event_times) < 2:
-        return 0
+    drain_length = 0
+    if len(event_times) >= 2:
+        first_event = event_times[0]
+        last_event = event_times[-1]
+        drain_length = last_event - first_event
+        
+        gap_threshold = 5000
+        
+        for i in range(1, len(event_times)):
+            gap = event_times[i] - event_times[i - 1]
+            if gap >= gap_threshold:
+                drain_length -= gap
     
-    first_event = event_times[0]
-    last_event = event_times[-1]
-    drain_length = last_event - first_event
-    
-    gap_threshold = 5000
-    
-    for i in range(1, len(event_times)):
-        gap = event_times[i] - event_times[i - 1]
-        if gap >= gap_threshold:
-            drain_length -= gap
+    for section in typing_sections:
+        start = section.get("startTime", 0)
+        end = section.get("endTime", 0)
+        drain_length += end - start
     
     return max(drain_length, 0)
