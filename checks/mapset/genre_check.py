@@ -51,11 +51,11 @@ def check_genre(result):
     
     for genre in GENRES:
         if genre in tags:
-            return CheckResult(CheckStatus.PASS, "Genre Check")
+            return CheckResult(CheckStatus.PASS, "Genre")
     
     return CheckResult(
         CheckStatus.WARNING,
-        "Missing Genre Tag",
+        "Genre",
         "No recognized genre tag found. Consider adding one of: " + ", ".join(GENRES[:10]) + ", etc."
     )
 

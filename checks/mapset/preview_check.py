@@ -7,9 +7,9 @@ def check_preview(result):
     if preview_time == -1:
         return CheckResult(
             CheckStatus.FAIL,
-            "Preview Point",
+            "Preview",
             "Preview point not set."
         )
     
-    return CheckResult(CheckStatus.PASS, "Preview Point")
+    return CheckResult(CheckStatus.PASS, "Preview")
 

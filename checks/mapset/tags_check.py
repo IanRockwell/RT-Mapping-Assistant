@@ -7,9 +7,9 @@ def check_tags(result):
     if not tags or not tags.strip():
         return CheckResult(
             CheckStatus.WARNING,
-            "Tags Check",
+            "Tags",
             "Tags field is empty."
         )
     
-    return CheckResult(CheckStatus.PASS, "Tags Check")
+    return CheckResult(CheckStatus.PASS, "Tags")
 

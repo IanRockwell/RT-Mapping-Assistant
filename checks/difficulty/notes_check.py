@@ -7,11 +7,11 @@ def check_has_notes(difficulty):
     if not notes:
         return CheckResult(
             CheckStatus.FAIL,
-            "Has Notes",
+            "Notes",
             "This difficulty has no notes placed."
         )
     
     return CheckResult(
         CheckStatus.PASS,
-        "Has Notes"
+        "Notes"
     )
