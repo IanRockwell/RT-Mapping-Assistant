@@ -75,7 +75,7 @@ def check_hitsound_consistency(result):
     difficulties = result.get("difficulties", [])
     
     if len(difficulties) < 2:
-        return CheckResult(CheckStatus.PASS, "Hitsound Consistency")
+        return CheckResult(CheckStatus.PASS, "HS Inconsistency")
     
     diff_data = {}
     for diff in difficulties:
@@ -126,7 +126,7 @@ def check_hitsound_consistency(result):
                 })
     
     if not inconsistencies:
-        return CheckResult(CheckStatus.PASS, "Hitsound Consistency")
+        return CheckResult(CheckStatus.PASS, "HS Inconsistency")
     
     # Build the attachment content with all differences
     attachment_lines = []
@@ -153,7 +153,7 @@ def check_hitsound_consistency(result):
     
     return CheckResult(
         CheckStatus.WARNING,
-        "Hitsound Consistency",
+        "HS Inconsistency",
         "\n".join(messages),
         attachment=("hitsound_differences.txt", attachment_content)
     )

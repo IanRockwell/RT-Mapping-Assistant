@@ -36,9 +36,9 @@ def check_gder_tags(result):
         
         return CheckResult(
             CheckStatus.WARNING,
-            "Missing GDers in tags.",
+            "GDer",
             "\n".join(messages)
         )
     
-    return CheckResult(CheckStatus.PASS, "GDer Tags Check")
+    return CheckResult(CheckStatus.PASS, "GDer")
 

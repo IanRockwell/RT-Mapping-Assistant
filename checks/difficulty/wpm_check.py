@@ -16,7 +16,7 @@ def check_typing_wpm(difficulty):
     typing_sections = data.get("typingSections", [])
     
     if not typing_sections:
-        return CheckResult(CheckStatus.PASS, "Typing WPM")
+        return CheckResult(CheckStatus.PASS, "WPM")
     
     high_wpm_sections = []
     
@@ -42,9 +42,9 @@ def check_typing_wpm(difficulty):
         )
         return CheckResult(
             CheckStatus.WARNING,
-            "Typing WPM",
+            "WPM",
             f"Typing section(s) requires more than 80 WPM which is quite fast. Ensure this makes sense: {details}"
         )
     
-    return CheckResult(CheckStatus.PASS, "Typing WPM")
+    return CheckResult(CheckStatus.PASS, "WPM")
 

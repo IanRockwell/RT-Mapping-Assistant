@@ -4,7 +4,7 @@ def check_background(result):
     background = result.get("background")
     
     if not background:
-        return CheckResult(CheckStatus.PASS, "Background Check")
+        return CheckResult(CheckStatus.PASS, "BG")
     
     width = background.get("width", 0)
     height = background.get("height", 0)
@@ -20,9 +20,9 @@ def check_background(result):
     if warnings:
         return CheckResult(
             CheckStatus.WARNING,
-            "Background Check",
+            "BG",
             " ".join(warnings)
         )
     
-    return CheckResult(CheckStatus.PASS, "Background Check")
+    return CheckResult(CheckStatus.PASS, "BG")
 

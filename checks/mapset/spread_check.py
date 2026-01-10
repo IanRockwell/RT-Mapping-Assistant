@@ -5,7 +5,7 @@ def check_spread_requirements(result):
     difficulties = result.get("difficulties", [])
 
     if not difficulties:
-        return CheckResult(CheckStatus.PASS, "Spread Requirements")
+        return CheckResult(CheckStatus.PASS, "Spread")
     
     drain_times = [calculate_drain_time(diff) for diff in difficulties]
     shortest_drain = min(drain_times) if drain_times else 0
@@ -16,28 +16,28 @@ def check_spread_requirements(result):
     if shortest_seconds < 30:
         return CheckResult(
             CheckStatus.FAIL,
-            "Spread Requirements",
+            "Spread",
             f"Shortest difficulty is less than 30 seconds. ({formatted_length})"
         )
     
     if shortest_seconds < 90:
         return CheckResult(
             CheckStatus.INFO,
-            "Spread Requirements",
+            "Spread",
             f"Shortest difficulty is {formatted_length}. Ensure your lowest difficulty isn't any harder than a Normal, and all in-between difficulties are included."
         )
     elif shortest_seconds < 135:
         return CheckResult(
             CheckStatus.INFO,
-            "Spread Requirements",
+            "Spread",
             f"Shortest difficulty is {formatted_length}. Ensure your lowest difficulty isn't any harder than a Hard, and all in-between difficulties are included."
         )
     elif shortest_seconds < 180:
         return CheckResult(
             CheckStatus.INFO,
-            "Spread Requirements",
+            "Spread",
             f"Shortest difficulty is {formatted_length}. Ensure your lowest difficulty isn't any harder than an Insane, and all in-between difficulties are included."
         )
     
-    return CheckResult(CheckStatus.PASS, "Spread Requirements")
+    return CheckResult(CheckStatus.PASS, "Spread")
 

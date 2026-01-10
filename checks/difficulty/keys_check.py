@@ -5,7 +5,7 @@ def check_key_count(difficulty):
     notes = difficulty.get("data", {}).get("notes", [])
     
     if not notes:
-        return CheckResult(CheckStatus.PASS, "Key Count")
+        return CheckResult(CheckStatus.PASS, "Keys")
     
     taps = [n for n in notes if n.get("type") == "tap"]
     holds = [n for n in notes if n.get("type") == "hold"]
@@ -25,9 +25,9 @@ def check_key_count(difficulty):
         if count > 10:
             return CheckResult(
                 CheckStatus.FAIL,
-                "Key Count",
+                "Keys",
                 f"More than 10 keys pressed at {format_timestamp(t)} ({count} keys)."
             )
     
-    return CheckResult(CheckStatus.PASS, "Key Count")
+    return CheckResult(CheckStatus.PASS, "Keys")
 

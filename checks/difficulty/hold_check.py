@@ -5,7 +5,7 @@ def check_hold_volume(difficulty):
     holds = [n for n in notes if n.get("type") == "hold"]
     
     if not holds:
-        return CheckResult(CheckStatus.PASS, "Hold Volume")
+        return CheckResult(CheckStatus.PASS, "Hold")
     
     loud_holds = []
     for hold in holds:
@@ -16,9 +16,9 @@ def check_hold_volume(difficulty):
     if loud_holds:
         return CheckResult(
             CheckStatus.WARNING,
-            "Hold Volume",
+            "Hold",
             f"{len(loud_holds)} held note(s) have a hold loop volume over 70. Make sure these are intentional, as they can potientially be unintentionally obnoxious."
         )
     
-    return CheckResult(CheckStatus.PASS, "Hold Volume")
+    return CheckResult(CheckStatus.PASS, "Hold")
 
