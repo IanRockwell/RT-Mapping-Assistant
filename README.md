@@ -33,23 +33,23 @@
 
 | Check | Description |
 |-------|-------------|
-| **Background Check** | Warns if the background image exceeds 2560x1440 or is not 16:9 aspect ratio. |
-| **GDer Tags Check** | Warns if a difficulty name contains a possessive form ('s or s') but the name isn't found in the tags. |
-| **Genre Check** | Warns if no recognized genre tag is found in the tags field. |
-| **Hitsound Consistency** | Warns if difficulties have mismatched hitsounds at the same timestamp (different sounds or one missing). |
-| **Preview Point** | Fails if no preview point is set in the map metadata. |
-| **Spread Requirements** | Validates drain time requirements and provides guidance on required difficulty spread based on song length. Maps under 30 seconds fail. |
-| **Tags Check** | Warns if the tags field is empty. |
+| **BG** | Warns if the background image exceeds 2560x1440 or is not 16:9 aspect ratio. |
+| **GDer** | Warns if a difficulty name contains a possessive form ('s or s') but the name isn't found in the tags. |
+| **Genre** | Warns if no recognized genre tag is found in the tags field. |
+| **HS Inconsistency** | Warns if difficulties have mismatched hitsounds at the same timestamp (different sounds or one missing). |
+| **Preview** | Fails if no preview point is set in the map metadata. |
+| **Spread** | Validates drain time requirements and provides guidance on required difficulty spread based on song length. Maps under 30 seconds fail. |
+| **Tags** | Warns if the tags field is empty. |
 
 #### 🎯 Difficulty Checks
 
 | Check | Description |
 |-------|-------------|
-| **Has Notes** | Fails if the difficulty contains no notes. |
-| ~~**Hold Volume**~~ | ~~Warns if any held notes have a hold loop volume exceeding 70, which may be obnoxiously loud.~~ |
-| **Key Count** | Fails if more than 10 keys are pressed simultaneously at any point. |
-| **OD Check** | Fails if OD is not set. Warns if OD is unusually low (below 2) or high (above 8). |
-| **Typing WPM** | Warns if any typing section requires more than 70 WPM to complete. |
+| **Notes** | Fails if the difficulty contains no notes. |
+| ~~**Hold**~~ | ~~Warns if any held notes have a hold loop volume exceeding 70, which may be obnoxiously loud.~~ |
+| **Keys** | Fails if more than 10 keys are pressed simultaneously at any point. |
+| **OD** | Fails if OD is not set. Warns if OD is unusually low (below 2) or high (above 8). |
+| **WPM** | Warns if any typing section requires more than 80 WPM to complete. |
 
 ### 🔊 `/copyhitsounds`
 
