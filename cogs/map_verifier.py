@@ -4,7 +4,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from io import BytesIO
-import re
 import json
 
 from utils.embed_helper import *
@@ -73,12 +72,11 @@ class MapVerifier(commands.Cog):
             map_id = None
             
             if url:
-                match = re.search(r"rhythmtyper\.net/beatmap/([a-zA-Z0-9]+)", url)
-                if not match:
+                map_id = extract_beatmap_id_from_url(url)
+                if not map_id:
                     embed = embed_generate(type="error", title="Invalid URL", description="Could not extract beatmap ID from the provided URL.")
                     await interaction.followup.send(embed=embed, ephemeral=True)
                     return
-                map_id = match.group(1)
 
                 try:
                     zip_bytes = await fetch_beatmap(map_id)

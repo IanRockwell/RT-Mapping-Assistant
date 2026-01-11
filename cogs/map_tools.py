@@ -1,5 +1,4 @@
 import logging
-import re
 from datetime import datetime
 from io import BytesIO
 import discord
@@ -20,8 +19,8 @@ class MapTools(commands.Cog):
     @app_commands.command(name="map", description="Get info about a beatmap from a URL")
     @app_commands.describe(url="URL to the beatmap")
     async def map_info(self, interaction: discord.Interaction, url: str):
-        match = re.search(r"rhythmtyper\.net/beatmap/([a-zA-Z0-9]+)", url)
-        if not match:
+        map_id = extract_beatmap_id_from_url(url)
+        if not map_id:
             embed = embed_generate(
                 type="error",
                 title="Invalid URL",
@@ -31,8 +30,6 @@ class MapTools(commands.Cog):
             return
 
         await interaction.response.defer()
-
-        map_id = match.group(1)
 
         try:
             metadata = await fetch_online_beatmap_metadata(map_id)

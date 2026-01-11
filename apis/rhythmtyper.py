@@ -1,9 +1,15 @@
 import aiohttp
 import zipfile
 import json
+import re
 from io import BytesIO
 from PIL import Image
 from mutagen import File as MutagenFile
+
+
+def extract_beatmap_id_from_url(url):
+    match = re.search(r"(?:rhythmtyper\.net|rhythm-typer\.web\.app)/beatmap/([a-zA-Z0-9]+)", url)
+    return match.group(1) if match else None
 
 def format_length(seconds):
     minutes = int(seconds // 60)
