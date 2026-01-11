@@ -1,23 +1,35 @@
-# RT Mapping Assistant
+<div align="center">
 
-A Discord bot designed to assist RhythmTyper mappers with beatmap verification and tooling.
+# 🎹 RT Mapping Assistant
 
-## Commands
+**A Discord bot designed to assist [RhythmTyper](https://rhythmtyper.net/) mappers with beatmap verification and tooling.**
 
-### /map
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Discord](https://img.shields.io/badge/Discord_OAuth-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/oauth2/authorize?client_id=1458240749664473160)
+[![License](https://img.shields.io/badge/License-See_File-green?style=for-the-badge)](LICENSE)
 
-Get info about a beatmap from a URL. Displays:
+</div>
+
+<br>
+
+## ⚡ Commands
+
+### 📋 `/map`
+
+> Get info about a beatmap from a URL
+
+**Displays:**
 
 - Song title, artist, and mapper
 - Length and BPM
 - Ranked status and play count
 - All difficulties with their star rating, OD, length, and object count
 
-### /verifymap
+### ✅ `/verifymap`
 
-Verify a beatmap for potential issues before ranking.
+> Verify a beatmap for potential issues before ranking
 
-#### Mapset Checks
+#### 🗂️ Mapset Checks
 
 | Check | Description |
 |-------|-------------|
@@ -29,7 +41,7 @@ Verify a beatmap for potential issues before ranking.
 | **Spread Requirements** | Validates drain time requirements and provides guidance on required difficulty spread based on song length. Maps under 30 seconds fail. |
 | **Tags Check** | Warns if the tags field is empty. |
 
-#### Difficulty Checks
+#### 🎯 Difficulty Checks
 
 | Check | Description |
 |-------|-------------|
@@ -39,19 +51,24 @@ Verify a beatmap for potential issues before ranking.
 | **OD Check** | Fails if OD is not set. Warns if OD is unusually low (below 2) or high (above 8). |
 | **Typing WPM** | Warns if any typing section requires more than 70 WPM to complete. |
 
-### /copyhitsounds
+### 🔊 `/copyhitsounds`
 
-Copy hitsounds from one difficulty to all other difficulties in a mapset.
-This is an experimental feature. The bot will return a modified `.rtm` file with hitsounds applied to all difficulties.
+> Copy hitsounds from one difficulty to all other difficulties in a mapset
 
-## Setup
+⚠️ *Experimental feature* — The bot will return a modified `.rtm` file with hitsounds applied to all difficulties.
+
+## 🛠️ Setup
 
 ### Requirements
 
 - Python 3.10+
 - Discord Bot Token
 
-## License
+---
 
-See [LICENSE](LICENSE) for details.
+<div align="center">
+
+**📜 Licensed under the terms in [LICENSE](LICENSE)**
+
+</div>
 
