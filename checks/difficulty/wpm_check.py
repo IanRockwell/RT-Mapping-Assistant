@@ -1,4 +1,5 @@
 from checks.base import CheckResult, CheckStatus
+from apis.rhythmtyper import format_timestamp
 
 
 def calculate_wpm(text, duration_ms):
@@ -36,14 +37,16 @@ def check_typing_wpm(difficulty):
             })
     
     if high_wpm_sections:
-        details = ", ".join(
-            f'"{s["text"]}" ({s["wpm"]} WPM)'
-            for s in high_wpm_sections
-        )
+        attachment_lines = [f"High WPM Typing Sections ({len(high_wpm_sections)} total):", ""]
+        for s in high_wpm_sections:
+            attachment_lines.append(f"[{format_timestamp(s['start_time'])}] {s['wpm']} WPM: \"{s['text']}\"")
+        attachment_content = "\n".join(attachment_lines)
+        
         return CheckResult(
             CheckStatus.WARNING,
             "WPM",
-            f"Typing section(s) requires more than 80 WPM which is quite fast. Ensure this makes sense: {details}"
+            f"{len(high_wpm_sections)} typing section(s) require more than 80 WPM which is quite fast. See attached file for details.",
+            attachment=("high_wpm_sections.txt", attachment_content)
         )
     
     return CheckResult(CheckStatus.PASS, "WPM")

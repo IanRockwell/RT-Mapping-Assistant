@@ -118,7 +118,6 @@ class MapVerifier(commands.Cog):
             meta_results = run_meta_checks(result)
             meta_embed = self.build_results_embed("Mapset Verification Results", meta_results)
             
-            # Collect any attachments from check results
             attachments = []
             for r in meta_results:
                 if r.attachment:
@@ -146,11 +145,28 @@ class MapVerifier(commands.Cog):
                 
                 diff_results = run_difficulty_checks(diff)
                 
+                # Collect any attachments from difficulty check results
+                diff_attachments = []
+                for r in diff_results:
+                    if r.attachment:
+                        filename, content = r.attachment
+                        diff_attachments.append(discord.File(BytesIO(content.encode('utf-8')), filename=filename))
+                
                 diff_embed = self.build_results_embed(f"Difficulty: {diff_name}", diff_results, description=diff_description)
                 
                 if diff_embed:
                     await asyncio.sleep(1)
-                    await interaction.followup.send(embed=diff_embed, ephemeral=True)
+                    try:
+                        if diff_attachments:
+                            await interaction.followup.send(embed=diff_embed, files=diff_attachments, ephemeral=True)
+                        else:
+                            await interaction.followup.send(embed=diff_embed, ephemeral=True)
+                    except discord.HTTPException as e:
+                        logger.error(f"Discord rejected embed for difficulty '{diff_name}': {e}")
+                        for field in diff_embed.fields:
+                            logger.info(f"[{field.name}] ({len(field.value)} chars):\n{field.value}")
+                        error_embed = embed_generate(type="error", title=f"Difficulty: {diff_name}", description="The results were too long to display. Check console/logs for details.")
+                        await interaction.followup.send(embed=error_embed, ephemeral=True)
                 else:
                     embed = embed_generate(type="success", title=f"Difficulty: {diff_name}", description=f"{diff_description}\n\nAll checks passed!")
                     await asyncio.sleep(1)
