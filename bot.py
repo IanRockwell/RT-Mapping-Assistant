@@ -25,7 +25,7 @@ intents.message_content = True
 bot = commands.Bot(
     command_prefix="!",
     intents=intents,
-    description="A simple Discord bot with cogs"
+    description="RhythmTyper Mapping Assistant."
 )
 
 
