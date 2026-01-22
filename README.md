@@ -64,6 +64,33 @@
 - Python 3.10+
 - Discord Bot Token
 
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/RT-Mapping-Assistant.git
+   cd RT-Mapping-Assistant
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Create a `.env` file** in the project root with your Discord bot token:
+   ```env
+   DISCORD_TOKEN=your_bot_token_here
+   ```
+
+4. **Run the bot**
+   ```bash
+   python bot.py
+   ```
+
+## 🤝 Contributing
+
+Feel free to open a PR!
+
 ---
 
 <div align="center">
