@@ -37,9 +37,10 @@ def check_typing_wpm(difficulty, meta=None):
             })
     
     if high_wpm_sections:
-        attachment_lines = [f"High WPM Typing Sections ({len(high_wpm_sections)} total):", ""]
+        attachment_lines = [f"High WPM Typing Sections ({len(high_wpm_sections)} total):"]
         for s in high_wpm_sections:
-            attachment_lines.append(f"[{format_timestamp(s['start_time'])}] {s['wpm']} WPM: \"{s['text']}\"")
+            attachment_lines.append(f"{format_timestamp(s['start_time'])} - {s['wpm']} WPM: \"{s['text']}\"")
+        attachment_lines.append("")
         attachment_content = "\n".join(attachment_lines)
         
         return CheckResult(

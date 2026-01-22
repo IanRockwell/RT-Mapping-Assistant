@@ -42,13 +42,13 @@
 | **Tags** | Warns if the tags field is empty. |
 
 #### 🎯 Difficulty Checks
-
 | Check | Description |
 |-------|-------------|
 | **Notes** | Fails if the difficulty contains no notes. |
 | ~~**Hold**~~ | ~~Warns if any held notes have a hold loop volume exceeding 70, which may be obnoxiously loud.~~ |
 | **Keys** | Fails if more than 10 keys are pressed simultaneously at any point. |
 | **OD** | Fails if OD is not set. Warns if OD is unusually low (below 2) or high (above 8). |
+| **Snap** | Fails if any notes are not snapped to a standard beat division (1/1 through 1/16). |
 | **WPM** | Warns if any typing section requires more than 80 WPM to complete. |
 
 ### 🔊 `/copyhitsounds`

@@ -141,11 +141,24 @@ class MapVerifier(commands.Cog):
                 diff_filename = diff.get("filename", "Unknown")
                 drain_time_ms = calculate_drain_time(diff)
                 drain_time_formatted = format_length(drain_time_ms / 1000)
-                diff_description = f"Drain Time: {drain_time_formatted}\nFile Name: {diff_filename}"
+                
+                meta = result.get("meta")
+                snap_counts = calculate_snap_counts(diff, meta)
+                snap_parts = []
+                if snap_counts:
+                    for div in ["1/1", "1/2", "1/3", "1/4", "1/6", "1/8", "1/12", "1/16"]:
+                        count = snap_counts.get(div, 0)
+                        if count > 0:
+                            snap_parts.append(f"{div}: {count}")
+                    unsnapped = snap_counts.get("unsnapped", 0)
+                    if unsnapped > 0:
+                        snap_parts.append(f"1/?: {unsnapped}")
+                snap_line = "Snapping: " + (" | ".join(snap_parts) if snap_parts else "No notes")
+                
+                diff_description = f"Drain Time: {drain_time_formatted}\n{snap_line}\nFile Name: {diff_filename}"
                 
                 diff_results = run_difficulty_checks(diff, meta=result.get("meta"))
                 
-                # Collect any attachments from difficulty check results
                 diff_attachments = []
                 for r in diff_results:
                     if r.attachment:
