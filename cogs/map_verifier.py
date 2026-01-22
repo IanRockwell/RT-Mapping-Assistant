@@ -143,7 +143,7 @@ class MapVerifier(commands.Cog):
                 drain_time_formatted = format_length(drain_time_ms / 1000)
                 diff_description = f"Drain Time: {drain_time_formatted}\nFile Name: {diff_filename}"
                 
-                diff_results = run_difficulty_checks(diff)
+                diff_results = run_difficulty_checks(diff, meta=result.get("meta"))
                 
                 # Collect any attachments from difficulty check results
                 diff_attachments = []

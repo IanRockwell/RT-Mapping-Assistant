@@ -1,7 +1,7 @@
 from checks.base import CheckResult, CheckStatus
 
 
-def check_has_notes(difficulty):
+def check_has_notes(difficulty, meta=None):
     notes = difficulty.get("data", {}).get("notes", [])
     
     if not notes:

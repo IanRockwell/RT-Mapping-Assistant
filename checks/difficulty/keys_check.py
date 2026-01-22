@@ -1,7 +1,7 @@
 from checks.base import CheckResult, CheckStatus
 from apis.rhythmtyper import format_timestamp
 
-def check_key_count(difficulty):
+def check_key_count(difficulty, meta=None):
     notes = difficulty.get("data", {}).get("notes", [])
     
     if not notes:

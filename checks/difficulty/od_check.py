@@ -1,7 +1,7 @@
 from checks.base import CheckResult, CheckStatus
 
 
-def check_od(difficulty):
+def check_od(difficulty, meta=None):
     od = difficulty.get("data", {}).get("overallDifficulty", 0)
     
     if od == 0:

@@ -12,7 +12,7 @@ def calculate_wpm(text, duration_ms):
     return wpm
 
 
-def check_typing_wpm(difficulty):
+def check_typing_wpm(difficulty, meta=None):
     data = difficulty.get("data", {})
     typing_sections = data.get("typingSections", [])
     

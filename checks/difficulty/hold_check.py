@@ -1,6 +1,6 @@
 from checks.base import CheckResult, CheckStatus
 
-def check_hold_volume(difficulty):
+def check_hold_volume(difficulty, meta=None):
     notes = difficulty.get("data", {}).get("notes", [])
     holds = [n for n in notes if n.get("type") == "hold"]
     
