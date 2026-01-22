@@ -40,6 +40,7 @@
 | **Preview** | Fails if no preview point is set in the map metadata. |
 | **Spread** | Validates drain time requirements and provides guidance on required difficulty spread based on song length. Maps under 30 seconds fail. |
 | **Tags** | Warns if the tags field is empty. |
+| **Unicode** | Fails if artistName or songName contain Unicode characters. Romanized fields should only contain ASCII. |
 
 #### 🎯 Difficulty Checks
 | Check | Description |
