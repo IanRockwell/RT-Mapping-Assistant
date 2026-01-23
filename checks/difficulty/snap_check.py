@@ -50,14 +50,18 @@ def check_unsnapped_notes(difficulty, meta=None):
     unsnapped_notes = []
     
     for note in notes:
-        if note.get("type") == "hold":
-            note_time = note.get("startTime", 0)
-        else:
-            note_time = note.get("time", 0)
+        times_to_check = []
         
-        tp = get_timing_point(note_time)
-        if not is_snapped(note_time, tp):
-            unsnapped_notes.append(note_time)
+        if note.get("type") == "hold":
+            times_to_check.append(note.get("startTime", 0))
+            times_to_check.append(note.get("endTime", 0))
+        else:
+            times_to_check.append(note.get("time", 0))
+        
+        for note_time in times_to_check:
+            tp = get_timing_point(note_time)
+            if not is_snapped(note_time, tp):
+                unsnapped_notes.append(note_time)
     
     if unsnapped_notes:
         formatted = [format_timestamp(t) for t in sorted(unsnapped_notes)]
