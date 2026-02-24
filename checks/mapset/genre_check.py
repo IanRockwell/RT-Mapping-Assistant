@@ -1,6 +1,5 @@
 from checks.base import CheckResult, CheckStatus
 
-# List of recognized genre tags
 GENRES = [
     "rock",
     "pop",
@@ -40,12 +39,7 @@ GENRES = [
     "experimental",
     "instrumental",
 ]
-
-
 def check_genre(result):
-    """
-    Check if at least one genre tag exists in the tags field.
-    """
     meta = result.get("meta", {})
     tags = meta.get("tags", "").lower()
     

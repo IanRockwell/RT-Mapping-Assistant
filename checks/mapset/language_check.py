@@ -2,10 +2,6 @@ from checks.base import CheckResult, CheckStatus
 
 
 def check_language(result):
-    """
-    Ensure the map's set language appears in tags. If language is "Other", warn
-    to put the correct language in tags.
-    """
     meta = result.get("meta", {})
     language = (meta.get("language") or "").strip().lower()
     tags = (meta.get("tags") or "").lower()
