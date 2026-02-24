@@ -2,6 +2,7 @@ from checks.base import CheckResult, CheckStatus
 
 # List of recognized language tags
 LANGUAGES = [
+    "instrumental",
     "english",
     "japanese",
     "korean",
@@ -12,7 +13,6 @@ LANGUAGES = [
     "italian",
     "portuguese",
     "russian",
-    "instrumental",
 
     # Languages not included on the site, but shouldn't be flagged if in tags anyways
     "conlang",
