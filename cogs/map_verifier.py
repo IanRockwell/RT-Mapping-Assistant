@@ -154,8 +154,9 @@ class MapVerifier(commands.Cog):
                     if unsnapped > 0:
                         snap_parts.append(f"1/?: {unsnapped}")
                 snap_line = "Snapping: " + (" | ".join(snap_parts) if snap_parts else "No notes")
+                od = diff.get("data", {}).get("overallDifficulty", "—")
                 
-                diff_description = f"Drain Time: {drain_time_formatted}\n{snap_line}\nFile Name: {diff_filename}"
+                diff_description = f"OD: {od}\nDrain Time: {drain_time_formatted}\n{snap_line}\nFile Name: {diff_filename}"
                 
                 meta = result.get("meta") or {}
                 audio_duration = (result.get("audio") or {}).get("duration")
