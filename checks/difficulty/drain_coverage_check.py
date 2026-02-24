@@ -1,11 +1,18 @@
+import logging
+
 from checks.base import CheckResult, CheckStatus
 from apis.rhythmtyper import calculate_drain_time, format_length
+
+logger = logging.getLogger(__name__)
 
 
 def check_drain_coverage(difficulty, meta=None):
     audio_duration = meta.get("_audio_duration") if meta else None
     if audio_duration is None or audio_duration <= 0:
-        print(f"Drain Coverage check: audio_duration={audio_duration} (missing or invalid), skipping check")
+        logger.warning(
+            "Drain Coverage check: audio_duration=%s (missing or invalid), skipping check",
+            audio_duration,
+        )
         return CheckResult(CheckStatus.PASS, "Drain Coverage")
 
     drain_ms = calculate_drain_time(difficulty)
