@@ -37,6 +37,7 @@
 | **GDer** | Warns if a difficulty name contains a possessive form ('s or s') but the name isn't found in the tags. |
 | **Genre** | Warns if no recognized genre tag is found in the tags field. |
 | **HS Inconsistency** | Warns if difficulties have mismatched hitsounds at the same timestamp (different sounds or one missing). |
+| **Language** | Fails if the map's set language is not found in the tags. Warns if language is set to "Other" to ensure the correct language is in the tags. |
 | **Preview** | Fails if no preview point is set in the map metadata. |
 | **Spread** | Validates drain time requirements and provides guidance on required difficulty spread based on song length. Maps under 30 seconds fail. |
 | **Tags** | Warns if the tags field is empty. |
