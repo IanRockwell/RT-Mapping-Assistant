@@ -1,62 +1,30 @@
 from checks.base import CheckResult, CheckStatus
 
-# List of recognized language tags
-LANGUAGES = [
-    "instrumental",
-    "english",
-    "japanese",
-    "korean",
-    "chinese",
-    "spanish",
-    "french",
-    "german",
-    "italian",
-    "portuguese",
-    "russian",
-
-    # Languages not included on the site, but shouldn't be flagged if in tags anyways
-    "conlang",
-    "hindi",
-    "arabic",
-    "turkish",
-    "vietnamese",
-    "persian",
-    "indonesian",
-    "ukrainian",
-    "romanian",
-    "dutch",
-    "thai",
-    "greek",
-    "somali",
-    "malay",
-    "hungarian",
-    "czech",
-    "norwegian",
-    "finnish",
-    "danish",
-    "latvia",
-    "lithuanian",
-    "estonian",
-    "punjabi",
-    "bengali",
-    "icelandic",
-    "tagalog",
-]
-
 
 def check_language(result):
     """
-    Check if at least one language tag exists in the tags field.
+    Ensure the map's set language appears in tags. If language is "Other", warn
+    to put the correct language in tags.
     """
     meta = result.get("meta", {})
-    tags = meta.get("tags", "").lower()
-    
-    for language in LANGUAGES:
-        if language in tags:
-            return CheckResult(CheckStatus.PASS, "Language")
-    
-    return CheckResult(
-        CheckStatus.WARNING,
-        "Language",
-        "No recognized language tag found. Consider adding one of: " + ", ".join(LANGUAGES[:10]) + ", etc."
-    )
+    language = (meta.get("language") or "").strip().lower()
+    tags = (meta.get("tags") or "").lower()
+
+    if language == "other":
+        return CheckResult(
+            CheckStatus.WARNING,
+            "Language",
+            "Language is set to \"Other\". Please ensure the correct language is in the tags.",
+        )
+
+    if not language:
+        return CheckResult(CheckStatus.PASS, "Language")
+
+    if language not in tags:
+        return CheckResult(
+            CheckStatus.FAIL,
+            "Language",
+            f"The map language is \"{language}\" but no matching language tag was found in the tags. Add the language to the tags.",
+        )
+
+    return CheckResult(CheckStatus.PASS, "Language")
