@@ -40,7 +40,7 @@ LANGUAGES = [
     "punjabi",
     "bengali",
     "icelandic",
-    
+    "tagalog",
 ]
 
 
