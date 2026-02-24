@@ -51,6 +51,7 @@
 | **OD** | Fails if OD is not set. Warns if OD is unusually low (below 2) or high (above 8). |
 | **Snap** | Fails if any notes are not snapped to a standard beat division (1/1 through 1/16). |
 | **WPM** | Warns if any typing section requires more than 80 WPM to complete. |
+| **Drain Coverage** | Fails if drain time is less than 60% of the total audio file length. |
 | ~~**Hold**~~ | ~~Warns if any held notes have a hold loop volume exceeding 70, which may be obnoxiously loud.~~ |
 
 ### 🔊 `/copyhitsounds`

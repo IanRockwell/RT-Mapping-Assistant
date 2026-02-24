@@ -157,7 +157,11 @@ class MapVerifier(commands.Cog):
                 
                 diff_description = f"Drain Time: {drain_time_formatted}\n{snap_line}\nFile Name: {diff_filename}"
                 
-                diff_results = run_difficulty_checks(diff, meta=result.get("meta"))
+                meta = result.get("meta") or {}
+                audio_duration = (result.get("audio") or {}).get("duration")
+                if audio_duration is not None and audio_duration > 0:
+                    meta = {**meta, "_audio_duration": audio_duration}
+                diff_results = run_difficulty_checks(diff, meta=meta)
                 
                 diff_attachments = []
                 for r in diff_results:
