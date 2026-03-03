@@ -38,6 +38,7 @@ GENRES = [
     "alternative",
     "experimental",
     "instrumental",
+    "novelty",
 ]
 def check_genre(result):
     meta = result.get("meta", {})
