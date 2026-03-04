@@ -14,17 +14,6 @@
 
 ## Commands
 
-### `/map`
-
-> Get info about a beatmap from a URL
-
-**Displays:**
-
-- Song title, artist, and mapper
-- Length and BPM
-- Ranked status and play count
-- All difficulties with their star rating, OD, length, and object count
-
 ### `/verifymap`
 
 > Verify a beatmap for potential issues before ranking
