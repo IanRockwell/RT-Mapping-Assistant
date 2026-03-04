@@ -108,31 +108,25 @@ def analyze_beatmap(zip_bytes):
     
     return result
 
-def calculate_snap_counts(difficulty, meta=None):
-    if not meta:
-        return None
-    
-    timing_points = meta.get("timingPoints", [])
-    if not timing_points:
-        return None
-    
-    timing_points = sorted(timing_points, key=lambda tp: tp.get("offset", 0))
-    
+def get_snap_data(difficulty, meta=None):
+
+    timing_points = sorted(meta.get("timingPoints", []), key=lambda tp: tp.get("offset", 0))
+
     data = difficulty.get("data", {})
     notes = data.get("notes", [])
-    
+
     counts = {
-        "1/1": 0, "1/2": 0, "1/3": 0, "1/4": 0,
-        "1/6": 0, "1/8": 0, "1/12": 0, "1/16": 0,
+        "1/1": 0, "1/2": 0, "1/3": 0, "1/4": 0, "1/5": 0, "1/6": 0, 
+        "1/7": 0, "1/8": 0, "1/12": 0, "1/16": 0, "1/32": 0,
         "unsnapped": 0
     }
-    
+
     if not notes:
-        return counts
-    
+        return (counts, [])
+
     snap_tolerance_ms = 2
-    divisors = [1, 2, 3, 4, 6, 8, 12, 16]
-    
+    divisors = [1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 32]
+
     def get_timing_point(time_ms):
         applicable = timing_points[0]
         for tp in timing_points:
@@ -141,23 +135,25 @@ def calculate_snap_counts(difficulty, meta=None):
             else:
                 break
         return applicable
-    
+
     def get_snap_division(note_time, tp):
         bpm = tp.get("bpm", 120)
         offset = tp.get("offset", 0)
         ms_per_beat = 60000 / bpm
         relative_pos = note_time - offset
-        
+
         for div in divisors:
             snap_interval = ms_per_beat / div
             remainder = relative_pos % snap_interval
             distance = min(remainder, snap_interval - remainder)
-            
+
             if distance <= snap_tolerance_ms:
                 return f"1/{div}"
-        
+
         return "unsnapped"
-    
+
+    unsnapped_timestamps = []
+
     for note in notes:
         if note.get("type") == "hold":
             times_to_check = [note.get("startTime", 0), note.get("endTime", 0)]
@@ -167,8 +163,15 @@ def calculate_snap_counts(difficulty, meta=None):
         for note_time in times_to_check:
             tp = get_timing_point(note_time)
             snap = get_snap_division(note_time, tp)
-            counts[snap] += 1
-    
+            counts[snap] = counts.get(snap, 0) + 1
+            if snap == "unsnapped":
+                unsnapped_timestamps.append(note_time)
+
+    return (counts, unsnapped_timestamps)
+
+
+def calculate_snap_counts(difficulty, meta=None):
+    counts, _ = get_snap_data(difficulty, meta)
     return counts
 
 

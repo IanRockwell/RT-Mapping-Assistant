@@ -143,7 +143,7 @@ class MapVerifier(commands.Cog):
                 snap_counts = calculate_snap_counts(diff, meta)
                 snap_parts = []
                 if snap_counts:
-                    for div in ["1/1", "1/2", "1/3", "1/4", "1/6", "1/8", "1/12", "1/16"]:
+                    for div in ["1/1", "1/2", "1/3", "1/4", "1/5", "1/6", "1/7", "1/8", "1/12", "1/16", "1/32"]:
                         count = snap_counts.get(div, 0)
                         if count > 0:
                             snap_parts.append(f"{div}: {count}")
