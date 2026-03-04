@@ -105,9 +105,6 @@ class MapVerifier(commands.Cog):
                 await interaction.followup.send(embed=embed, ephemeral=True)
                 return
             
-            with open("verification_result.txt", "w", encoding="utf-8") as f:
-                json.dump(result, f, indent=2)
-            
             map_name = result.get("meta", {}).get("songName", "Unknown")
             mapper_name = result.get("meta", {}).get("mapper", "Unknown")
             if map_id:
