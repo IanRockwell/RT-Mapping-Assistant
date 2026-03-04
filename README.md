@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎹 RT Mapping Assistant
+# RT Mapping Assistant
 
 **A Discord bot designed to assist [RhythmTyper](https://rhythmtyper.net/) mappers with beatmap verification and tooling.**
 
@@ -12,9 +12,9 @@
 
 <br>
 
-## ⚡ Commands
+## Commands
 
-### 📋 `/map`
+### `/map`
 
 > Get info about a beatmap from a URL
 
@@ -25,11 +25,11 @@
 - Ranked status and play count
 - All difficulties with their star rating, OD, length, and object count
 
-### ✅ `/verifymap`
+### `/verifymap`
 
 > Verify a beatmap for potential issues before ranking
 
-#### 🗂️ Mapset Checks
+#### Mapset Checks
 
 | Check | Description |
 |-------|-------------|
@@ -43,7 +43,7 @@
 | **Tags** | Warns if the tags field is empty. |
 | **Unicode** | Fails if artistName or songName contain Unicode characters. Romanized fields should only contain ASCII. |
 
-#### 🎯 Difficulty Checks
+#### Difficulty Checks
 | Check | Description |
 |-------|-------------|
 | **Notes** | Fails if the difficulty contains no notes. |
@@ -54,13 +54,13 @@
 | **Drain Coverage** | Fails if drain time is less than 60% of the total audio file length. |
 | ~~**Hold**~~ | ~~Warns if any held notes have a hold loop volume exceeding 70, which may be obnoxiously loud.~~ |
 
-### 🔊 `/copyhitsounds`
+### `/copyhitsounds`
 
 > Copy hitsounds from one difficulty to all other difficulties in a mapset
 
-⚠️ *Experimental feature* — The bot will return a modified `.rtm` file with hitsounds applied to all difficulties.
+*Experimental feature* — The bot will return a modified `.rtm` file with hitsounds applied to all difficulties.
 
-## 🛠️ Setup
+## Setup
 
 ### Requirements
 
@@ -90,7 +90,7 @@
    python bot.py
    ```
 
-## 🤝 Contributing
+## Contributing
 
 Feel free to open a PR!
 
@@ -98,7 +98,6 @@ Feel free to open a PR!
 
 <div align="center">
 
-**📜 Licensed under the terms in [LICENSE](LICENSE)**
+**Licensed under the terms in [LICENSE](LICENSE)**
 
 </div>
-
