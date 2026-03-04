@@ -38,7 +38,7 @@
 | **Notes** | Fails if the difficulty contains no notes. |
 | **Keys** | Fails if more than 10 keys are pressed simultaneously at any point. |
 | **OD** | Fails if OD is not set. Warns if OD is unusually low (below 2) or high (above 8). |
-| **Snap** | Fails if any notes are not snapped to a standard beat division (1/1 through 1/16). |
+| **Snap** | Fails if notes aren't snapped to 1/1–1/32. Warns on uncommon divisions (1/5, 1/7, 1/12, 1/16, 1/32). |
 | **WPM** | Warns if any typing section requires more than 80 WPM to complete. |
 | **Drain Coverage** | Fails if drain time is less than 60% of the total audio file length. |
 | ~~**Hold**~~ | ~~Warns if any held notes have a hold loop volume exceeding 70, which may be obnoxiously loud.~~ |
