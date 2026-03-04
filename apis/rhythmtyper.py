@@ -7,12 +7,6 @@ from PIL import Image
 from mutagen import File as MutagenFile
 
 
-def extract_beatmap_id_from_url(url):
-    match = re.search(r"(?:rhythmtyper\.net|rhythm-typer\.web\.app|rhythm-typer\.webapp|rhythm\-typer\.web\.app|rhythm-typer\.webapp|rhythm-typer\.web\.app|rhythm-typer\.web\.app|rhythm-typer\.webapp|rhythmtyper\.web\.app|rhythmtyper\.webapp)/beatmap/([a-zA-Z0-9]+)", url)
-    if not match:
-        match = re.search(r"(?:rhythmtyper\.net|rhythmtyper\.web\.app)/beatmap/([a-zA-Z0-9]+)", url)
-    return match.group(1) if match else None
-
 def format_length(seconds):
     minutes = int(seconds // 60)
     secs = int(seconds % 60)
@@ -24,6 +18,12 @@ def format_timestamp(ms):
     seconds = int(total_seconds % 60)
     centiseconds = int((ms % 1000) / 10)
     return f"{minutes}:{seconds:02d}:{centiseconds:02d}"
+
+def extract_beatmap_id_from_url(url):
+    match = re.search(r"(?:rhythmtyper\.net|rhythm-typer\.web\.app|rhythm-typer\.webapp|rhythm\-typer\.web\.app|rhythm-typer\.webapp|rhythm-typer\.web\.app|rhythm-typer\.web\.app|rhythm-typer\.webapp|rhythmtyper\.web\.app|rhythmtyper\.webapp)/beatmap/([a-zA-Z0-9]+)", url)
+    if not match:
+        match = re.search(r"(?:rhythmtyper\.net|rhythmtyper\.web\.app)/beatmap/([a-zA-Z0-9]+)", url)
+    return match.group(1) if match else None
 
 async def fetch_online_beatmap_metadata(map_id):
 
@@ -122,7 +122,7 @@ def get_snap_data(difficulty, meta=None):
     }
 
     if not notes:
-        return (counts, [])
+        return (counts, [], {})
 
     snap_tolerance_ms = 2
     divisors = [1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 32]
@@ -153,6 +153,7 @@ def get_snap_data(difficulty, meta=None):
         return "unsnapped"
 
     unsnapped_timestamps = []
+    timestamps_by_division = {}
 
     for note in notes:
         if note.get("type") == "hold":
@@ -164,14 +165,17 @@ def get_snap_data(difficulty, meta=None):
             tp = get_timing_point(note_time)
             snap = get_snap_division(note_time, tp)
             counts[snap] = counts.get(snap, 0) + 1
+            if snap not in timestamps_by_division:
+                timestamps_by_division[snap] = []
+            timestamps_by_division[snap].append(note_time)
             if snap == "unsnapped":
                 unsnapped_timestamps.append(note_time)
 
-    return (counts, unsnapped_timestamps)
+    return (counts, unsnapped_timestamps, timestamps_by_division)
 
 
 def calculate_snap_counts(difficulty, meta=None):
-    counts, _ = get_snap_data(difficulty, meta)
+    counts, _, _ = get_snap_data(difficulty, meta)
     return counts
 
 
