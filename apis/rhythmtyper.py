@@ -60,11 +60,19 @@ def analyze_beatmap(zip_bytes):
     }
     
     with zipfile.ZipFile(zip_bytes, 'r') as z:
-        for f in z.namelist():
+        namelist = z.namelist()
+        if "meta.json" in namelist:
+            result["meta"] = json.loads(z.read("meta.json"))
+
+        for f in namelist:
             info = z.getinfo(f)
-            
+            audio_file_meta = (result.get("meta") or {}).get("audioFile")
+            is_audio = (audio_file_meta and f.lower() == audio_file_meta.lower()) or (
+                not audio_file_meta and f.lower().startswith("audio.") and f.lower().endswith((".mp3", ".ogg", ".wav"))
+            )
+
             if f == "meta.json":
-                result["meta"] = json.loads(z.read(f))
+                pass
             elif f.endswith(".json"):
                 result["difficulties"].append({
                     "filename": f,
@@ -79,16 +87,16 @@ def analyze_beatmap(zip_bytes):
                         "height": img.height,
                         "size_bytes": info.file_size
                     }
-            elif f.lower().startswith("audio.") and f.lower().endswith((".mp3", ".ogg", ".wav")):
+            elif is_audio:
                 audio_bytes = BytesIO(z.read(f))
                 audio_file = MutagenFile(audio_bytes)
                 duration = audio_file.info.length if audio_file and audio_file.info else None
-                
+
                 bitrate = None
                 if duration and duration > 0:
                     bits = info.file_size * 8
                     bitrate = (bits / duration) / 1000
-                
+
                 result["audio"] = {
                     "filename": f,
                     "size_bytes": info.file_size,

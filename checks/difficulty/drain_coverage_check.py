@@ -8,13 +8,6 @@ logger = logging.getLogger(__name__)
 
 def check_drain_coverage(difficulty, meta=None):
     audio_duration = meta.get("_audio_duration") if meta else None
-    if audio_duration is None or audio_duration <= 0:
-        logger.warning(
-            "Drain Coverage check: audio_duration=%s (missing or invalid), skipping check",
-            audio_duration,
-        )
-        return CheckResult(CheckStatus.PASS, "Drain Coverage")
-
     drain_ms = calculate_drain_time(difficulty)
     drain_seconds = drain_ms / 1000
     ratio = drain_seconds / audio_duration
