@@ -160,13 +160,14 @@ def calculate_snap_counts(difficulty, meta=None):
     
     for note in notes:
         if note.get("type") == "hold":
-            note_time = note.get("startTime", 0)
+            times_to_check = [note.get("startTime", 0), note.get("endTime", 0)]
         else:
-            note_time = note.get("time", 0)
-        
-        tp = get_timing_point(note_time)
-        snap = get_snap_division(note_time, tp)
-        counts[snap] += 1
+            times_to_check = [note.get("time", 0)]
+
+        for note_time in times_to_check:
+            tp = get_timing_point(note_time)
+            snap = get_snap_division(note_time, tp)
+            counts[snap] += 1
     
     return counts
 
