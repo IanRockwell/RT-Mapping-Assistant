@@ -25,9 +25,5 @@ def check_od(difficulty, meta=None):
             f"OD is high ({od}). Ensure this makes sense."
         )
     
-    return CheckResult(
-        CheckStatus.PASS,
-        "OD",
-        f"OD is set to {od}."
-    )
+    return CheckResult(CheckStatus.PASS, "OD")
 
