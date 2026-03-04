@@ -4,7 +4,7 @@ import json
 import re
 from io import BytesIO
 from PIL import Image
-from mutagen import File as MutagenFile
+from tinytag import TinyTag
 
 
 def format_length(seconds):
@@ -89,13 +89,16 @@ def analyze_beatmap(zip_bytes):
                     }
             elif is_audio:
                 audio_bytes = BytesIO(z.read(f))
-                audio_file = MutagenFile(audio_bytes)
-                duration = audio_file.info.length if audio_file and audio_file.info else None
-
-                bitrate = None
-                if duration and duration > 0:
-                    bits = info.file_size * 8
-                    bitrate = (bits / duration) / 1000
+                audio_bytes.seek(0)
+                try:
+                    tag = TinyTag.get(file_obj=audio_bytes)
+                    duration = tag.duration if tag else None
+                    bitrate = tag.bitrate if tag and tag.bitrate else None
+                except Exception:
+                    duration = None
+                    bitrate = None
+                if bitrate is None and duration and duration > 0:
+                    bitrate = (info.file_size * 8 / duration) / 1000
 
                 result["audio"] = {
                     "filename": f,
