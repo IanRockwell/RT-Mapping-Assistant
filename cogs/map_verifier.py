@@ -4,7 +4,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from io import BytesIO
-import json
 
 from utils.embed_helper import *
 from apis.rhythmtyper import *
@@ -18,6 +17,14 @@ class MapVerifier(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    def _collect_attachments(self, results):
+        attachments = []
+        for r in results:
+            if r.attachment:
+                filename, content = r.attachment
+                attachments.append(discord.File(BytesIO(content.encode('utf-8')), filename=filename))
+        return attachments
+
     def build_results_embed(self, title, check_results, color_override=None, description=None):
         fails = [r for r in check_results if r.status == CheckStatus.FAIL]
         warnings = [r for r in check_results if r.status == CheckStatus.WARNING]
@@ -30,16 +37,11 @@ class MapVerifier(commands.Cog):
         embed = discord.Embed(title=title, description=description, color=color)
 
         if infos:
-            info_text = "\n".join(f"ℹ️ **{r.name}**: {r.message}" for r in infos)
-            embed.add_field(name="Info", value=info_text, inline=False)
-
+            embed.add_field(name="Info", value="\n".join(f"ℹ️ **{r.name}**: {r.message}" for r in infos), inline=False)
         if fails:
-            fail_text = "\n".join(f"❌ **{r.name}**: {r.message}" for r in fails)
-            embed.add_field(name="Errors", value=fail_text, inline=False)
-
+            embed.add_field(name="Errors", value="\n".join(f"❌ **{r.name}**: {r.message}" for r in fails), inline=False)
         if warnings:
-            warn_text = "\n".join(f"⚠️ **{r.name}**: {r.message}" for r in warnings)
-            embed.add_field(name="Warnings", value=warn_text, inline=False)
+            embed.add_field(name="Warnings", value="\n".join(f"⚠️ **{r.name}**: {r.message}" for r in warnings), inline=False)
 
         return embed
 
@@ -67,10 +69,8 @@ class MapVerifier(commands.Cog):
         await interaction.response.defer(ephemeral=True)
 
         try:
-            result = None
-            
             map_id = None
-            
+
             if url:
                 map_id = extract_beatmap_id_from_url(url)
                 if not map_id:
@@ -90,7 +90,7 @@ class MapVerifier(commands.Cog):
                     await interaction.followup.send(embed=embed, ephemeral=True)
                     return
 
-            elif file:
+            else:
                 try:
                     zip_bytes = BytesIO(await file.read())
                     result = analyze_beatmap(zip_bytes)
@@ -99,47 +99,56 @@ class MapVerifier(commands.Cog):
                     embed = embed_generate(type="error", title="Invalid Map File", description=f"The provided file could not be parsed as a valid beatmap.\n\n**Error:** `{type(e).__name__}: {e}`")
                     await interaction.followup.send(embed=embed, ephemeral=True)
                     return
-            
+
             if not result or not isinstance(result, dict) or not result.get("meta"):
                 embed = embed_generate(type="error", title="Invalid Map File", description="The provided file could not be parsed as a valid beatmap.")
                 await interaction.followup.send(embed=embed, ephemeral=True)
                 return
-            
-            map_name = result.get("meta", {}).get("songName", "Unknown")
-            mapper_name = result.get("meta", {}).get("mapper", "Unknown")
-            if map_id:
-                logger.info(f"{interaction.user} checked map '{map_name}' by {mapper_name} (ID: {map_id})")
-            else:
-                logger.info(f"{interaction.user} checked map '{map_name}' by {mapper_name} (file: {file.filename})")
-            
+
+            meta = result.get("meta", {})
+            difficulties = result.get("difficulties", [])
+            audio = result.get("audio") or {}
+            audio_duration = audio.get("duration")
+            audio_length_str = format_length(audio_duration) if audio_duration and audio_duration > 0 else "—"
+            audio_bitrate = audio.get("bitrate")
+            audio_quality_str = f"{audio_bitrate:.0f} kbps" if audio_bitrate else "—"
+
+            source = f"ID: {map_id}" if map_id else f"file: {file.filename}"
+            logger.info(f"{interaction.user} checked map '{meta.get('songName')}' by {meta.get('mapper')} ({source})")
+
+            meta_description = (
+                f"**Legend:** ℹ️ Info · ⚠️ Potential issue · ❌ Unrankable\n"
+                f"May miss or misidentify issues; use your own judgement. ([Implemented checks](https://github.com/IanRockwell/RT-Mapping-Assistant/blob/main/README.md))\n"
+                f"\n**Title:** {meta.get('artistName')} - {meta.get('songName')} ({meta.get('mapper')})\n"
+                f"**Diffs:** {len(difficulties)}\n"
+                f"**Audio:** {audio_length_str} ({audio_quality_str})"
+            )
+
             meta_results = run_meta_checks(result)
-            meta_embed = self.build_results_embed("Mapset Verification Results", meta_results)
-            
-            attachments = []
-            for r in meta_results:
-                if r.attachment:
-                    filename, content = r.attachment
-                    attachments.append(discord.File(BytesIO(content.encode('utf-8')), filename=filename))
-            
+            meta_embed = self.build_results_embed(
+                "Mapset Verification Results", meta_results, description=meta_description
+            )
+            attachments = self._collect_attachments(meta_results)
+
             if meta_embed:
-                meta_embed.set_footer(text="ℹ️ Info • ⚠️ Potential issue • ❌ Unrankable")
                 if attachments:
                     await interaction.followup.send(embed=meta_embed, files=attachments, ephemeral=True)
                 else:
                     await interaction.followup.send(embed=meta_embed, ephemeral=True)
             else:
-                embed = embed_generate(type="success", title="Mapset Checks Passed", description="No mapset-level issues found!")
+                embed = embed_generate(
+                    type="success",
+                    title="Mapset Checks Passed",
+                    description=f"{meta_description}\n\nNo mapset-level issues found!",
+                )
                 await interaction.followup.send(embed=embed, ephemeral=True)
 
-            difficulties = result.get("difficulties", [])
-            
             for diff in difficulties:
                 diff_name = diff.get("data", {}).get("name", "Unknown")
                 diff_filename = diff.get("filename", "Unknown")
                 drain_time_ms = calculate_drain_time(diff)
                 drain_time_formatted = format_length(drain_time_ms / 1000)
-                
-                meta = result.get("meta")
+
                 snap_counts = calculate_snap_counts(diff, meta)
                 snap_parts = []
                 if snap_counts:
@@ -150,27 +159,25 @@ class MapVerifier(commands.Cog):
                     unsnapped = snap_counts.get("unsnapped", 0)
                     if unsnapped > 0:
                         snap_parts.append(f"1/?: {unsnapped}")
-                snap_line = "Snapping: " + (" | ".join(snap_parts) if snap_parts else "No notes")
+                snap_value = " | ".join(snap_parts) if snap_parts else "No notes"
                 od = diff.get("data", {}).get("overallDifficulty", "—")
-                
-                diff_description = f"OD: {od}\nDrain Time: {drain_time_formatted}\n{snap_line}\nFile Name: {diff_filename}"
-                
-                meta = result.get("meta") or {}
-                audio_duration = (result.get("audio") or {}).get("duration")
+
+                diff_description = (
+                    f"**OD:** {od}\n"
+                    f"**Drain:** {drain_time_formatted}\n"
+                    f"**Snapping:** {snap_value}"
+                )
+
+                diff_meta = dict(meta)
                 if audio_duration is not None and audio_duration > 0:
-                    meta = {**meta, "_audio_duration": audio_duration}
-                diff_results = run_difficulty_checks(diff, meta=meta)
-                
-                diff_attachments = []
-                for r in diff_results:
-                    if r.attachment:
-                        filename, content = r.attachment
-                        diff_attachments.append(discord.File(BytesIO(content.encode('utf-8')), filename=filename))
-                
+                    diff_meta["_audio_duration"] = audio_duration
+                diff_results = run_difficulty_checks(diff, meta=diff_meta)
+
+                diff_attachments = self._collect_attachments(diff_results)
                 diff_embed = self.build_results_embed(f"Difficulty: {diff_name}", diff_results, description=diff_description)
-                
+
+                await asyncio.sleep(1)
                 if diff_embed:
-                    await asyncio.sleep(1)
                     try:
                         if diff_attachments:
                             await interaction.followup.send(embed=diff_embed, files=diff_attachments, ephemeral=True)
@@ -184,9 +191,8 @@ class MapVerifier(commands.Cog):
                         await interaction.followup.send(embed=error_embed, ephemeral=True)
                 else:
                     embed = embed_generate(type="success", title=f"Difficulty: {diff_name}", description=f"{diff_description}\n\nAll checks passed!")
-                    await asyncio.sleep(1)
                     await interaction.followup.send(embed=embed, ephemeral=True)
-        
+
         except Exception as e:
             logger.exception("Unexpected error during map verification")
             embed = embed_generate(type="error", title="Verification Error", description=f"An unexpected error occurred during verification.\n\n**Error:** `{type(e).__name__}: {e}`")
