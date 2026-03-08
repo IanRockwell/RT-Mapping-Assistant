@@ -10,7 +10,7 @@ def check_language(result):
         return CheckResult(
             CheckStatus.WARNING,
             "Language",
-            "Language is set to \"Other\". Please ensure the correct language is in the tags.",
+            "\n- Language is set to \"Other\". Please ensure the correct language is in the tags.",
         )
 
     if not language:
@@ -20,7 +20,7 @@ def check_language(result):
         return CheckResult(
             CheckStatus.FAIL,
             "Language",
-            f"The map language is \"{language}\" but no matching language tag was found in the tags. Add the language to the tags.",
+            f"\n- The map language is \"{language}\" but no matching language tag was found in the tags. Add the language to the tags.",
         )
 
     return CheckResult(CheckStatus.PASS, "Language")

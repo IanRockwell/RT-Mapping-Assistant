@@ -8,7 +8,7 @@ def check_tags(result):
         return CheckResult(
             CheckStatus.WARNING,
             "Tags",
-            "Tags field is empty."
+            "\n- Tags field is empty."
         )
     
     return CheckResult(CheckStatus.PASS, "Tags")

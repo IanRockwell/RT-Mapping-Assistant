@@ -21,7 +21,7 @@ def check_background(result):
         return CheckResult(
             CheckStatus.WARNING,
             "BG",
-            " ".join(warnings)
+            "\n" + "\n".join(f"- {w}" for w in warnings)
         )
     
     return CheckResult(CheckStatus.PASS, "BG")

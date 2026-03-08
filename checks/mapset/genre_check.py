@@ -51,6 +51,6 @@ def check_genre(result):
     return CheckResult(
         CheckStatus.WARNING,
         "Genre",
-        "No recognized genre tag found. Consider adding one of: " + ", ".join(GENRES[:10]) + ", etc."
+        "\n- No recognized genre tag found. Consider adding one of: " + ", ".join(GENRES[:10]) + ", etc."
     )
 

@@ -46,7 +46,7 @@ def check_typing_wpm(difficulty, meta=None):
         return CheckResult(
             CheckStatus.WARNING,
             "WPM",
-            f"{len(high_wpm_sections)} typing section(s) require more than 80 WPM which is quite fast. See attached file for details.",
+            f"\n- {len(high_wpm_sections)} typing section(s) require more than 80 WPM which is quite fast. See attached file for details.",
             attachment=("high_wpm_sections.txt", attachment_content)
         )
     

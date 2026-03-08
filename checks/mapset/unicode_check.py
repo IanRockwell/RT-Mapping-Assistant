@@ -36,7 +36,7 @@ def check_unicode_in_romanized(result):
             if suggestion not in unique_unicode:
                 unique_unicode.append(suggestion)
         
-        message = "\n".join(issues)
+        message = "\n" + "\n".join(f"- {issue}" for issue in issues)
         
         return CheckResult(
             CheckStatus.FAIL,

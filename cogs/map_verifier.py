@@ -112,6 +112,11 @@ class MapVerifier(commands.Cog):
             audio_length_str = format_length(audio_duration) if audio_duration and audio_duration > 0 else "—"
             audio_bitrate = audio.get("bitrate")
             audio_quality_str = f"{audio_bitrate:.0f} kbps" if audio_bitrate else "—"
+            audio_size_bytes = audio.get("size_bytes")
+            if audio_size_bytes is not None and audio_size_bytes >= 0:
+                audio_size_str = f"{audio_size_bytes / (1024 * 1024):.2f} MB" if audio_size_bytes >= 1024 * 1024 else f"{audio_size_bytes / 1024:.1f} KB"
+            else:
+                audio_size_str = "—"
 
             source = f"ID: {map_id}" if map_id else f"file: {file.filename}"
             logger.info(f"{interaction.user} checked map '{meta.get('songName')}' by {meta.get('mapper')} ({source})")
@@ -121,7 +126,7 @@ class MapVerifier(commands.Cog):
                 f"May miss or misidentify issues; use your own judgement. ([Implemented checks](https://github.com/IanRockwell/RT-Mapping-Assistant/blob/main/README.md))\n"
                 f"\n**Title:** {meta.get('artistName')} - {meta.get('songName')} ({meta.get('mapper')})\n"
                 f"**Diffs:** {len(difficulties)}\n"
-                f"**Audio:** {audio_length_str} ({audio_quality_str})"
+                f"**Audio:** {audio_length_str} ({audio_quality_str}) ({audio_size_str})"
             )
 
             meta_results = run_meta_checks(result)

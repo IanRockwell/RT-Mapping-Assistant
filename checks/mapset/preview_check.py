@@ -8,7 +8,7 @@ def check_preview(result):
         return CheckResult(
             CheckStatus.FAIL,
             "Preview",
-            "Preview point not set."
+            "\n- Preview point not set."
         )
     
     return CheckResult(CheckStatus.PASS, "Preview")

@@ -31,13 +31,16 @@ def check_gder_tags(result):
     
     if missing_gders:
         messages = []
-        for diff_name, gder_name in missing_gders:
-            messages.append(f'"{diff_name}" is possessive but "{gder_name}" isn\'t in the tags, ignore if not a user.')
-        
+        for diff_name, gder_name in missing_gders[:3]:
+            messages.append(f'- "{diff_name}" is possessive but "{gder_name}" isn\'t in the tags, ignore if not a user.')
+        if len(missing_gders) > 3:
+            remaining = len(missing_gders) - 3
+            messages.append(f"- and {remaining} more...")
+
         return CheckResult(
             CheckStatus.WARNING,
             "GDer",
-            "\n".join(messages)
+            "\n" + "\n".join(messages)
         )
     
     return CheckResult(CheckStatus.PASS, "GDer")

@@ -26,7 +26,7 @@ def check_key_count(difficulty, meta=None):
             return CheckResult(
                 CheckStatus.FAIL,
                 "Keys",
-                f"More than 10 keys pressed at {format_timestamp(t)} ({count} keys)."
+                f"\n- More than 10 keys pressed at {format_timestamp(t)} ({count} keys)."
             )
     
     return CheckResult(CheckStatus.PASS, "Keys")

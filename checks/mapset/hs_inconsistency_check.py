@@ -141,19 +141,20 @@ def check_hitsound_consistency(result):
     attachment_content = "\n".join(attachment_lines)
     
     # Build summary message
-    messages = ["Ensure these are intentional. If they're not, consider using __/copyhitsounds__ to make them consistent."]
-    for inc in inconsistencies[:5]:  # Limit to 5 messages
+    messages = ["- Ensure these are intentional. If they're not, consider using __/copyhitsounds__ to make them consistent."]
+    for inc in inconsistencies[:3]:  # Limit to 3 messages
         times = inc["times"]
         messages.append(
             f"- '{inc['diff1']}' and '{inc['diff2']}' have mismatched hitsounds ({len(times)} differences)"
         )
     
-    if len(inconsistencies) > 5:
-        messages.append("- etc.")
+    if len(inconsistencies) > 3:
+        remaining = len(inconsistencies) - 3
+        messages.append(f"- and {remaining} more...")
     
     return CheckResult(
         CheckStatus.WARNING,
         "HS Inconsistency",
-        "\n".join(messages),
+        "\n" + "\n".join(messages),
         attachment=("hitsound_differences.txt", attachment_content)
     )

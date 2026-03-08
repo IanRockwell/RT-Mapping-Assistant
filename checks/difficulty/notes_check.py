@@ -8,7 +8,7 @@ def check_has_notes(difficulty, meta=None):
         return CheckResult(
             CheckStatus.FAIL,
             "Notes",
-            "This difficulty has no notes placed."
+            "\n- This difficulty has no notes placed."
         )
     
     return CheckResult(CheckStatus.PASS, "Notes")

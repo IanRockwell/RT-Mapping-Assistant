@@ -8,21 +8,21 @@ def check_od(difficulty, meta=None):
         return CheckResult(
             CheckStatus.FAIL,
             "OD",
-            "OD has not been set."
+            "\n- OD has not been set."
         )
     
     if od < 2:
         return CheckResult(
             CheckStatus.WARNING,
             "OD",
-            f"OD is low ({od}). Ensure this makes sense."
+            f"\n- OD is low ({od}). Ensure this makes sense."
         )
     
     if od > 8:
         return CheckResult(
             CheckStatus.WARNING,
             "OD",
-            f"OD is high ({od}). Ensure this makes sense."
+            f"\n- OD is high ({od}). Ensure this makes sense."
         )
     
     return CheckResult(CheckStatus.PASS, "OD")

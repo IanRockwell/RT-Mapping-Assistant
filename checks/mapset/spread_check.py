@@ -17,26 +17,26 @@ def check_spread_requirements(result):
         return CheckResult(
             CheckStatus.FAIL,
             "Spread",
-            f"Shortest difficulty is less than 30 seconds. ({formatted_length})"
+            f"\n- Shortest difficulty is less than 30 seconds. ({formatted_length})"
         )
     
     if shortest_seconds < 90:
         return CheckResult(
             CheckStatus.INFO,
             "Spread",
-            f"Shortest difficulty is {formatted_length}. Ensure your lowest difficulty isn't any harder than a Normal, and all in-between difficulties are included."
+            f"\n- Shortest difficulty is {formatted_length}. Ensure your lowest difficulty isn't any harder than a Normal, and all in-between difficulties are included."
         )
     elif shortest_seconds < 135:
         return CheckResult(
             CheckStatus.INFO,
             "Spread",
-            f"Shortest difficulty is {formatted_length}. Ensure your lowest difficulty isn't any harder than a Hard, and all in-between difficulties are included."
+            f"\n- Shortest difficulty is {formatted_length}. Ensure your lowest difficulty isn't any harder than a Hard, and all in-between difficulties are included."
         )
     elif shortest_seconds < 180:
         return CheckResult(
             CheckStatus.INFO,
             "Spread",
-            f"Shortest difficulty is {formatted_length}. Ensure your lowest difficulty isn't any harder than an Insane, and all in-between difficulties are included."
+            f"\n- Shortest difficulty is {formatted_length}. Ensure your lowest difficulty isn't any harder than an Insane, and all in-between difficulties are included."
         )
     
     return CheckResult(CheckStatus.PASS, "Spread")

@@ -16,7 +16,7 @@ def check_drain_coverage(difficulty, meta=None):
         return CheckResult(
             CheckStatus.FAIL,
             "Drain Coverage",
-            f"Drain time ({format_length(drain_seconds)}) is {ratio * 100:.1f}% of audio ({format_length(audio_duration)}). Must map at least 60% of the audio.",
+            f"\n- Drain time ({format_length(drain_seconds)}) is {ratio * 100:.1f}% of audio ({format_length(audio_duration)}). Must map at least 60% of the audio.",
         )
 
     return CheckResult(CheckStatus.PASS, "Drain Coverage")
