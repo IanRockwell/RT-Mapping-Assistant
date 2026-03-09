@@ -38,7 +38,7 @@ async def fetch_online_beatmap_metadata(map_id):
 
 async def fetch_beatmap(map_id):
 
-    url = f"https://storage.googleapis.com/rhythm-typer.firebasestorage.app/beatmaps/{map_id}/{map_id}.rtm"
+    url = f"https://storage.googleapis.com/rhythm-typer.firebasestorage.app/beatmaps/{map_id}/{map_id}.rtm?=v#"
     
     async with aiohttp.ClientSession() as s, s.get(url) as r:
         if r.status == 403:

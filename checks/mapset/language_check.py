@@ -13,9 +13,6 @@ def check_language(result):
             "\n- Language is set to \"Other\". Please ensure the correct language is in the tags.",
         )
 
-    if not language:
-        return CheckResult(CheckStatus.PASS, "Language")
-
     if language not in tags:
         return CheckResult(
             CheckStatus.FAIL,
