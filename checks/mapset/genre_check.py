@@ -43,11 +43,16 @@ GENRES = [
 def check_genre(result):
     meta = result.get("meta", {})
     tags = meta.get("tags", "").lower()
-    
-    for genre in GENRES:
-        if genre in tags:
-            return CheckResult(CheckStatus.PASS, "Genre")
-    
+    tag_set = set(tags.split())
+
+    matched = any(
+        (genre in tags if " " in genre else genre in tag_set)
+        for genre in GENRES
+    )
+
+    if matched:
+        return CheckResult(CheckStatus.PASS, "Genre")
+
     return CheckResult(
         CheckStatus.WARNING,
         "Genre",
