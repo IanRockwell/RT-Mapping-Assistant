@@ -21,7 +21,7 @@ def check_unsnapped_notes(difficulty, meta=None):
         return CheckResult(
             CheckStatus.FAIL,
             "Snap",
-            f"\n- {len(unsnapped_timestamps)} note(s) are not snapped to any standard beat division (1/1 through 1/32). See attached file for timestamps.",
+            f"\n- {len(unsnapped_timestamps)} note(s) are not snapped to any standard beat division (1/1 through 1/32). See attached file for details.",
             attachment=("unsnapped_notes.txt", attachment_content)
         )
 
@@ -40,7 +40,7 @@ def check_unsnapped_notes(difficulty, meta=None):
         return CheckResult(
             CheckStatus.WARNING,
             "Snap",
-            "\n- Map uses uncommon snap divisions (1/5, 1/7, 1/12, 1/16, 1/32). See attached file. Ensure these are intentional.",
+            "\n- Map uses uncommon snap divisions (1/5, 1/7, 1/12, 1/16, 1/32). Ensure these are intentional. See attached file for details.",
             attachment=("uncommon_snap_divisions.txt", attachment_content)
         )
 
