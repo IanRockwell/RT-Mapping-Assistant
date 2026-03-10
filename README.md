@@ -41,7 +41,7 @@
 | **Snap** | Fails if notes aren't snapped to 1/1–1/32. Warns on uncommon divisions (1/5, 1/7, 1/12, 1/16, 1/32). |
 | **WPM** | Warns if any typing section requires more than 80 WPM to complete. |
 | **Drain Coverage** | Fails if drain time is less than 60% of the total audio file length. |
-| ~~**Hold**~~ | ~~Warns if any held notes have a hold loop volume exceeding 70, which may be obnoxiously loud.~~ |
+| **Hold** | Warns if at least 50% of hold notes have a hold loop volume above 60%. It's recommended to only use volumes above 60% for good reason. |
 
 ### `/copyhitsounds`
 
