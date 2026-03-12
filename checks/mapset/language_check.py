@@ -4,7 +4,8 @@ from checks.base import CheckResult, CheckStatus
 def check_language(result):
     meta = result.get("meta", {})
     language = (meta.get("language") or "").strip().lower()
-    tag_set = set((meta.get("tags") or "").lower().split())
+    tags = meta.get("tags", "").lower()
+    tag_set = tags.split()
 
     if language == "other":
         return CheckResult(
