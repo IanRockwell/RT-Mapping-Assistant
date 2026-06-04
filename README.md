@@ -49,6 +49,12 @@
 
 *Experimental feature* — The bot will return a modified `.rtm` file with hitsounds applied to all difficulties.
 
+### `/shiftnotes`
+
+> Shift all notes in a mapset by a given number of milliseconds
+
+The bot will return a modified `.rtm` file with note timings shifted.
+
 ## Setup
 
 ### Requirements
