@@ -31,7 +31,7 @@
 | **Spread** | Validates drain time requirements and provides guidance on required difficulty spread based on song length. Maps under 30 seconds fail. |
 | **Tags** | Warns if the tags field is empty. |
 | **Unicode** | Fails if artistName or songName contain Unicode characters. Romanized fields should only contain ASCII. |
-| **Audio Quality** | Warns if the audio appears overencoded — spectral analysis suggests a significantly lower quality than the file's declared bitrate (gap of 64+ kbps). |
+| **Audio Quality** | Warns if the audio appears overencoded. Spectral analysis suggesting a significantly lower quality than the file's declared bitrate (gap of 64+ kbps). |
 
 #### Difficulty Checks
 | Check | Description |
