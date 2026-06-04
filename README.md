@@ -79,6 +79,11 @@
    python bot.py
    ```
 
+## To Do:
+
+- Check if theres two+ notes that are within the 2ms buffer but not equal
+- Add bob's hitsounding warning
+
 ## Contributing
 
 Feel free to open a PR!
