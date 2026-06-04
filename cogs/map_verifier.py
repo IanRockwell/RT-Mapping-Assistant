@@ -110,9 +110,14 @@ class MapVerifier(commands.Cog):
             audio = result.get("audio") or {}
             audio_duration = audio.get("duration")
             audio_length_str = format_length(audio_duration) if audio_duration and audio_duration > 0 else "—"
-            audio_bitrate = audio.get("bitrate")
-            audio_quality_str = f"{audio_bitrate:.0f} kbps" if audio_bitrate else "—"
+            avg_br = audio.get("average_bitrate")
+            file_br = audio.get("bitrate")
+            if avg_br or file_br:
+                audio_quality_str = f"{avg_br:.0f}/{file_br:.0f} kbps" if avg_br and file_br else f"{(avg_br or file_br):.0f} kbps"
+            else:
+                audio_quality_str = "—"
             audio_size_bytes = audio.get("size_bytes")
+       
             if audio_size_bytes is not None and audio_size_bytes >= 0:
                 audio_size_str = f"{audio_size_bytes / (1024 * 1024):.2f} MB" if audio_size_bytes >= 1024 * 1024 else f"{audio_size_bytes / 1024:.1f} KB"
             else:

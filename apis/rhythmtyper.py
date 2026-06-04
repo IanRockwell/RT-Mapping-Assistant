@@ -5,6 +5,75 @@ import re
 from io import BytesIO
 from PIL import Image
 from tinytag import TinyTag
+from mutagen import File as MutagenFile
+import subprocess
+import shutil
+
+
+def average_bitrate_kbps(data: bytes, filename: str) -> float | None:
+    try:
+        audio = MutagenFile(BytesIO(data), filename=filename)
+        if audio is None or audio.info is None:
+            return None
+        return audio.info.bitrate / 1000
+    except Exception:
+        return None
+
+
+def detect_audio_cutoff(data: bytes) -> int | None:
+    try:
+        import numpy as np
+
+        if not shutil.which("ffmpeg"):
+            return None
+
+        proc = subprocess.run(
+            ["ffmpeg", "-i", "pipe:0", "-f", "f32le", "-ac", "1", "-ar", "44100", "-loglevel", "quiet", "pipe:1"],
+            input=data, capture_output=True, timeout=30
+        )
+
+        pcm = np.frombuffer(proc.stdout, dtype=np.float32)
+        segment_size = 65536
+        if len(pcm) < segment_size:
+            return None
+
+        start = max(0, len(pcm) // 2 - segment_size // 2)
+        segment = pcm[start : start + segment_size].copy()
+
+        n = np.arange(segment_size)
+        windowed = segment * (0.5 * (1 - np.cos(2 * np.pi * n / (segment_size - 1))))
+
+        mags = np.abs(np.fft.rfft(windowed))
+        freqs = np.fft.rfftfreq(segment_size, d=1.0 / 44100)
+
+        peak = mags.max()
+        if peak == 0:
+            return None
+
+        above = np.where(mags >= peak * 0.00001)[0]
+        if len(above) == 0:
+            return None
+
+        return int(freqs[above[-1]] // 100)
+    except Exception:
+        return None
+
+
+CUTOFF_BITRATE_TABLE = [
+    (200, 320),
+    (175, 192),
+    (150, 128),
+    (130, 96),
+    (0,   64),
+]
+
+def cutoff_to_bitrate(cutoff_units: int | None) -> float | None:
+    if cutoff_units is None:
+        return None
+    for threshold, bitrate in CUTOFF_BITRATE_TABLE:
+        if cutoff_units >= threshold:
+            return float(bitrate)
+    return None
 
 
 def format_length(seconds):
@@ -88,23 +157,33 @@ def analyze_beatmap(zip_bytes):
                         "size_bytes": info.file_size
                     }
             elif is_audio:
-                audio_bytes = BytesIO(z.read(f))
+                raw_audio = z.read(f)
+                audio_bytes = BytesIO(raw_audio)
                 audio_bytes.seek(0)
+                file_bitrate = None
+                duration = None
+
                 try:
-                    tag = TinyTag.get(file_obj=audio_bytes)
+                    tag = TinyTag.get(file_obj=audio_bytes, filename=f)
                     duration = tag.duration if tag else None
-                    bitrate = tag.bitrate if tag and tag.bitrate else None
+                    file_bitrate = tag.bitrate if tag and tag.bitrate else None
                 except Exception:
                     duration = None
-                    bitrate = None
-                if bitrate is None and duration and duration > 0:
-                    bitrate = (info.file_size * 8 / duration) / 1000
+                    file_bitrate = None
+
+                cutoff_units = detect_audio_cutoff(raw_audio)
+                average_bitrate = cutoff_to_bitrate(cutoff_units)
+                if average_bitrate is None:
+                    average_bitrate = average_bitrate_kbps(raw_audio, f)
+                if average_bitrate is None and duration and duration > 0:
+                    average_bitrate = (info.file_size * 8 / duration) / 1000
 
                 result["audio"] = {
                     "filename": f,
                     "size_bytes": info.file_size,
                     "duration": duration,
-                    "bitrate": round(bitrate, 1) if bitrate else None
+                    "bitrate": round(file_bitrate, 1) if file_bitrate else None,
+                    "average_bitrate": round(average_bitrate, 1) if average_bitrate else None,
                 }
             elif f.lower().endswith((".mp4", ".webm")):
                 result["video"] = {
