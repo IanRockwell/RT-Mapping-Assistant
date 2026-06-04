@@ -10,7 +10,7 @@ import subprocess
 import shutil
 
 
-def average_bitrate_kbps(data: bytes, filename: str) -> float | None:
+def average_bitrate_kbps(data, filename):
     try:
         audio = MutagenFile(BytesIO(data), filename=filename)
         if audio is None or audio.info is None:
@@ -20,15 +20,19 @@ def average_bitrate_kbps(data: bytes, filename: str) -> float | None:
         return None
 
 
-def detect_audio_cutoff(data: bytes) -> int | None:
+def detect_audio_cutoff(data, filename):
     try:
         import numpy as np
 
         if not shutil.which("ffmpeg"):
             return None
 
+        ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+        fmt_map = {"mp3": "mp3", "ogg": "ogg", "wav": "wav", "flac": "flac"}
+        fmt_args = ["-f", fmt_map[ext]] if ext in fmt_map else []
+
         proc = subprocess.run(
-            ["ffmpeg", "-i", "pipe:0", "-f", "f32le", "-ac", "1", "-ar", "44100", "-loglevel", "quiet", "pipe:1"],
+            ["ffmpeg", *fmt_args, "-i", "pipe:0", "-f", "f32le", "-ac", "1", "-ar", "44100", "-loglevel", "quiet", "pipe:1"],
             input=data, capture_output=True, timeout=30
         )
 
@@ -67,7 +71,7 @@ CUTOFF_BITRATE_TABLE = [
     (0,   64),
 ]
 
-def cutoff_to_bitrate(cutoff_units: int | None) -> float | None:
+def cutoff_to_bitrate(cutoff_units):
     if cutoff_units is None:
         return None
     for threshold, bitrate in CUTOFF_BITRATE_TABLE:
@@ -171,7 +175,7 @@ def analyze_beatmap(zip_bytes):
                     duration = None
                     file_bitrate = None
 
-                cutoff_units = detect_audio_cutoff(raw_audio)
+                cutoff_units = detect_audio_cutoff(raw_audio, f)
                 average_bitrate = cutoff_to_bitrate(cutoff_units)
                 if average_bitrate is None:
                     average_bitrate = average_bitrate_kbps(raw_audio, f)
