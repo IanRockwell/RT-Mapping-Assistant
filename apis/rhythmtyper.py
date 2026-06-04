@@ -120,12 +120,17 @@ def analyze_beatmap(zip_bytes):
     return result
 
 
+def get_timing_points(meta):
+    timing_points = (meta or {}).get("timingPoints", [])
+    for tp in timing_points:
+        tp["offset"] = int(round(tp.get("time", 0) * 1000))
+    return sorted(timing_points, key=lambda tp: tp["offset"])
+
+
 def get_timing_point(time_ms, timing_points):
     applicable = timing_points[0]
     for tp in timing_points:
-        offset = int(round(tp.get("time", 0) * 1000)) # this is here to basically just revert andrew's file format change
-        if offset <= time_ms:
-            tp["offset"] = offset
+        if tp["offset"] <= time_ms:
             applicable = tp
         else:
             break
@@ -151,7 +156,7 @@ def get_snap_division(note_time, tp, divisors, snap_tolerance_ms):
 
 def get_snap_data(difficulty, meta=None):
 
-    timing_points = sorted(meta.get("timingPoints", []), key=lambda tp: tp.get("offset", 0))
+    timing_points = get_timing_points(meta)
 
     data = difficulty.get("data", {})
     notes = data.get("notes", [])
