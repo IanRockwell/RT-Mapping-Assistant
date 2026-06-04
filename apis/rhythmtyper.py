@@ -123,7 +123,7 @@ def analyze_beatmap(zip_bytes):
 def get_timing_point(time_ms, timing_points):
     applicable = timing_points[0]
     for tp in timing_points:
-        offset = int(round(tp.get("time", 0) * 1000))
+        offset = int(round(tp.get("time", 0) * 1000)) # this is here to basically just revert andrew's file format change
         if offset <= time_ms:
             tp["offset"] = offset
             applicable = tp
