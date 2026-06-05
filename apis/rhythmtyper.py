@@ -175,7 +175,7 @@ def analyze_beatmap(zip_bytes):
                     duration = None
                     file_bitrate = None
 
-                cutoff_units = detect_audio_cutoff(raw_audio, f)
+                cutoff_units = detect_audio_cutoff(raw_audio, f) if f.lower().endswith(".mp3") else None
                 average_bitrate = cutoff_to_bitrate(cutoff_units)
                 if average_bitrate is None:
                     average_bitrate = average_bitrate_kbps(raw_audio, f)
