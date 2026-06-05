@@ -62,7 +62,7 @@ The bot will return a modified `.rtm` file with note timings shifted.
 
 - Python 3.10+
 - Discord Bot Token
-- [ffmpeg](https://ffmpeg.org/download.html) (optional, it's required for spectral audio quality detection)
+- [ffmpeg](https://ffmpeg.org/download.html) (optional, but it's required for spectral audio quality detection)
 
 ### Installation
 
