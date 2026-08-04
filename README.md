@@ -37,6 +37,9 @@
 | Check | Description |
 |-------|-------------|
 | **Notes** | Fails if the difficulty contains no notes. |
+| **Time Order** | Fails if any hold note or typing section has an end time that is not after its start time. |
+| **Chord Alignment** | Fails if notes (taps, hold starts, or hold ends) are within 2ms of each other without being exactly aligned, which can break chord snap coloring. |
+| **Key Overlap** | Fails if two or more notes share the same key at the same time, including taps during an active hold or notes within the 2ms tolerance window. |
 | **Keys** | Fails if more than 10 keys are pressed simultaneously at any point. |
 | **OD** | Fails if OD is not set. Warns if OD is unusually low (below 2) or high (above 8). |
 | **Snap** | Fails if notes aren't snapped to 1/1–1/32. Warns on uncommon divisions (1/5, 1/7, 1/12, 1/16, 1/32). |
@@ -89,7 +92,6 @@ The bot will return a modified `.rtm` file with note timings shifted.
 
 ## To Do:
 
-- Check if theres two+ notes that are within the 2ms buffer but not equal
 - Add bob's hitsounding warning
 
 ## Contributing
