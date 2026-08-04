@@ -8,15 +8,17 @@ def check_chord_alignment(difficulty, meta=None):
     if not notes:
         return CheckResult(CheckStatus.PASS, "Chord Alignment")
 
-    times = set()
+    keys_by_time = {}
     for note in notes:
         if note.get("type") == "hold":
-            times.add(note.get("startTime", 0))
-            times.add(note.get("endTime", 0))
+            note_times = [note.get("startTime", 0), note.get("endTime", 0)]
         else:
-            times.add(note.get("time", 0))
+            note_times = [note.get("time", 0)]
 
-    sorted_times = sorted(times)
+        for note_time in note_times:
+            keys_by_time.setdefault(note_time, set()).add(note.get("key"))
+
+    sorted_times = sorted(keys_by_time)
 
     groups = []
     current = [sorted_times[0]]
@@ -35,7 +37,11 @@ def check_chord_alignment(difficulty, meta=None):
 
     attachment_lines = [f"Misaligned Chords ({len(groups)} total):"]
     for group in groups:
-        attachment_lines.append(", ".join(format_timestamp(t) for t in group))
+        entries = []
+        for t in group:
+            keys = sorted(k for k in keys_by_time[t] if k is not None)
+            entries.append(f"{format_timestamp(t)} [{', '.join(keys)}]")
+        attachment_lines.append(" | ".join(entries))
     attachment_lines.append("")
     attachment_content = "\n".join(attachment_lines)
 
