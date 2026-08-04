@@ -9,6 +9,8 @@ from mutagen import File as MutagenFile
 import subprocess
 import shutil
 
+SNAP_TOLERANCE_MS = 2
+
 
 def average_bitrate_kbps(data, filename):
     try:
@@ -220,7 +222,7 @@ def get_timing_point(time_ms, timing_points):
     return applicable
 
 
-def get_snap_division(note_time, tp, divisors, snap_tolerance_ms):
+def get_snap_division(note_time, tp, divisors, snap_tolerance_ms=SNAP_TOLERANCE_MS):
     bpm = tp.get("bpm", 120)
     offset = tp.get("offset", 0)
     ms_per_beat = 60000 / bpm
@@ -253,7 +255,6 @@ def get_snap_data(difficulty, meta=None):
     if not notes:
         return (counts, [], {})
 
-    snap_tolerance_ms = 2
     divisors = [1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 32]
 
     unsnapped_timestamps = []
@@ -267,7 +268,7 @@ def get_snap_data(difficulty, meta=None):
 
         for note_time in times_to_check:
             tp = get_timing_point(note_time, timing_points)
-            snap = get_snap_division(note_time, tp, divisors, snap_tolerance_ms)
+            snap = get_snap_division(note_time, tp, divisors)
             counts[snap] = counts.get(snap, 0) + 1
             if snap not in timestamps_by_division:
                 timestamps_by_division[snap] = []
