@@ -35,8 +35,7 @@ def check_chord_alignment(difficulty, meta=None):
 
     attachment_lines = [f"Misaligned Chords ({len(groups)} total):"]
     for group in groups:
-        offsets = ", ".join(f"{t}ms" for t in group)
-        attachment_lines.append(f"{format_timestamp(group[0])} - {offsets}")
+        attachment_lines.append(", ".join(format_timestamp(t) for t in group))
     attachment_lines.append("")
     attachment_content = "\n".join(attachment_lines)
 

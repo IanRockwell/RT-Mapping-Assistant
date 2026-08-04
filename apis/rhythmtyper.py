@@ -91,8 +91,8 @@ def format_timestamp(ms):
     total_seconds = ms / 1000
     minutes = int(total_seconds // 60)
     seconds = int(total_seconds % 60)
-    centiseconds = int((ms % 1000) / 10)
-    return f"{minutes}:{seconds:02d}:{centiseconds:02d}"
+    milliseconds = int(ms % 1000)
+    return f"{minutes}:{seconds:02d}:{milliseconds:03d}"
 
 def extract_beatmap_id_from_url(url):
     match = re.search(r"(?:rhythmtyper\.net|rhythm-typer\.web\.app|rhythm-typer\.webapp|rhythm\-typer\.web\.app|rhythm-typer\.webapp|rhythm-typer\.web\.app|rhythm-typer\.web\.app|rhythm-typer\.webapp|rhythmtyper\.web\.app|rhythmtyper\.webapp)/beatmap/([a-zA-Z0-9]+)", url)
