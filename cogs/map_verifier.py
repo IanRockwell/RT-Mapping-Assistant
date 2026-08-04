@@ -123,6 +123,21 @@ class MapVerifier(commands.Cog):
             else:
                 audio_size_str = "—"
 
+            background = result.get("background") or {}
+            bg_width = background.get("width")
+            bg_height = background.get("height")
+            if bg_width and bg_height:
+                bg_resolution_str = f"{bg_width}x{bg_height}"
+            else:
+                bg_resolution_str = "—"
+            bg_filename = background.get("filename") or ""
+            bg_format_str = "." + bg_filename.rsplit(".", 1)[-1].lower() if "." in bg_filename else "—"
+            bg_size_bytes = background.get("size_bytes")
+            if bg_size_bytes is not None and bg_size_bytes >= 0:
+                bg_size_str = f"{bg_size_bytes / (1024 * 1024):.2f} MB" if bg_size_bytes >= 1024 * 1024 else f"{bg_size_bytes / 1024:.1f} KB"
+            else:
+                bg_size_str = "—"
+
             source = f"ID: {map_id}" if map_id else f"file: {file.filename}"
             logger.info(f"{interaction.user} checked map '{meta.get('songName')}' by {meta.get('mapper')} ({source})")
 
@@ -131,7 +146,8 @@ class MapVerifier(commands.Cog):
                 f"May miss or misidentify issues; use your own judgement. ([Implemented checks](https://github.com/IanRockwell/RT-Mapping-Assistant/blob/main/README.md))\n"
                 f"\n**Title:** {meta.get('artistName')} - {meta.get('songName')} ({meta.get('mapper')})\n"
                 f"**Diffs:** {len(difficulties)}\n"
-                f"**Audio:** {audio_length_str} ({audio_quality_str}) ({audio_size_str})"
+                f"**Audio:** {audio_length_str} ({audio_quality_str}) ({audio_size_str})\n"
+                f"**Background:** {bg_resolution_str} ({bg_format_str}) ({bg_size_str})"
             )
 
             meta_results = run_meta_checks(result)
