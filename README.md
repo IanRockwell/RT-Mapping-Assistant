@@ -22,7 +22,7 @@
 
 | Check | Description |
 |-------|-------------|
-| **BG** | Warns if the background image exceeds 2560x1440 or is not 16:9 aspect ratio. |
+| **BG** | Warns if the background image exceeds 2560x1440. |
 | **GDer** | Warns if a difficulty name contains a possessive form ('s or s') but the name isn't found in the tags. |
 | **Genre** | Warns if no recognized genre tag is found in the tags field. |
 | **HS Inconsistency** | Warns if difficulties have mismatched hitsounds at the same timestamp (different sounds or one missing). |
@@ -38,7 +38,7 @@
 |-------|-------------|
 | **Notes** | Fails if the difficulty contains no notes. |
 | **Time Order** | Fails if any hold note or typing section has an end time that is not after its start time. |
-| **Chord Alignment** | Fails if notes (taps, hold starts, or hold ends) are within 2ms of each other without being exactly aligned, which can break chord snap coloring. |
+| **Chord Alignment** | Fails if notes (taps, hold starts, or hold ends) are within 2ms of each other without being exactly aligned, which can break snap coloring. |
 | **Key Overlap** | Fails if two or more notes share the same key at the same time, including taps during an active hold or notes within the 2ms tolerance window. |
 | **Keys** | Fails if more than 10 keys are pressed simultaneously at any point. |
 | **OD** | Fails if OD is not set. Warns if OD is unusually low (below 2) or high (above 8). |
@@ -89,10 +89,6 @@ The bot will return a modified `.rtm` file with note timings shifted.
    ```bash
    python bot.py
    ```
-
-## To Do:
-
-- Add bob's hitsounding warning
 
 ## Contributing
 
