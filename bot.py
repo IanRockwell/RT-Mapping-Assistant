@@ -23,10 +23,10 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(
-    command_prefix="!",
+    command_prefix=[],
     intents=intents,
     description="RhythmTyper Mapping Assistant.",
-    help_command=None
+    help_command=None,
 )
 
 
