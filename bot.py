@@ -25,7 +25,8 @@ intents.message_content = True
 bot = commands.Bot(
     command_prefix="!",
     intents=intents,
-    description="RhythmTyper Mapping Assistant."
+    description="RhythmTyper Mapping Assistant.",
+    help_command=None
 )
 
 
