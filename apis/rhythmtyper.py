@@ -102,7 +102,7 @@ def extract_beatmap_id_from_url(url):
 
 async def fetch_online_beatmap_metadata(map_id):
 
-    url = f"https://us-central1-rhythm-typer.cloudfunctions.net/api/getBeatmaps?limit=1&mapsetId={map_id}"
+    url = f"https://api.rhythmtyper.net/getBeatmaps?limit=1&mapsetId={map_id}"
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
             if resp.status == 403:
@@ -113,7 +113,7 @@ async def fetch_online_beatmap_metadata(map_id):
 
 async def fetch_beatmap(map_id):
 
-    url = f"https://storage.googleapis.com/rhythm-typer.firebasestorage.app/beatmaps/{map_id}/{map_id}.rtm?=v#"
+    url = f"https://api.rhythmtyper.net/beatmaps/{map_id}/{map_id}.rtm?=v#"
     
     async with aiohttp.ClientSession() as s, s.get(url) as r:
         if r.status == 403:
